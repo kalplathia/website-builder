@@ -1,36 +1,86 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# AI Website Builder
 
-## Getting Started
+An AI-powered website builder platform. Admins create invite passcodes, clients submit business details via a passcode-protected form, and AI generates complete 5-page websites (Home, About, Contact, Privacy, Terms).
 
-First, run the development server:
+## Tech Stack
+
+- **Framework**: Next.js 16 (App Router, Turbopack)
+- **UI**: ShadCN v4 + Tailwind CSS v4
+- **AI**: OpenAI GPT-4o-mini
+- **Database**: Firebase Firestore
+- **File Storage**: Firebase Storage
+- **Deployment**: Firebase App Hosting
+- **Auth**: HMAC-signed cookie (single admin password)
+
+## Setup
+
+### 1. Install dependencies
+
+```bash
+npm install
+```
+
+### 2. Configure environment variables
+
+Create `.env.local`:
+
+```env
+OPENAI_API_KEY=your-openai-api-key
+ADMIN_PASSWORD=your-admin-password
+GOOGLE_APPLICATION_CREDENTIALS=./service-account.json
+```
+
+### 3. Firebase service account (local dev)
+
+Download from Firebase Console > Project Settings > Service Accounts > "Generate new private key". Save as `service-account.json` in the project root.
+
+### 4. Run development server
 
 ```bash
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open [http://localhost:3000](http://localhost:3000).
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Deployment (Firebase App Hosting)
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+Secrets are managed via Google Cloud Secret Manager:
 
-## Learn More
+```bash
+firebase apphosting:secrets:set OPENAI_API_KEY
+firebase apphosting:secrets:set ADMIN_PASSWORD
+```
 
-To learn more about Next.js, take a look at the following resources:
+Initialize App Hosting and connect your GitHub repo:
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+```bash
+firebase init apphosting --project website-builder-system
+```
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+Deploy Firestore and Storage rules:
 
-## Deploy on Vercel
+```bash
+firebase deploy --only firestore:rules,storage --project website-builder-system
+```
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## Project Structure
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+```
+app/                  # Next.js routes
+  admin/              # Admin dashboard, sites, invites (auth-protected)
+  api/                # API routes (sites, invites, generate, upload, auth)
+  sites/[slug]/       # Public generated websites
+  submit/[passcode]/  # Client submission form
+  preview/[template]/ # Template previews
+components/           # Shared components
+  admin/              # Admin UI components
+  templates/          # Starter template (7 page components)
+  ui/                 # ShadCN primitives
+lib/                  # Utilities
+  firebase.ts         # Firebase Admin SDK init
+  sites.ts            # Site CRUD (Firestore)
+  invites.ts          # Invite management (Firestore)
+  ai.ts               # OpenAI content generation
+  auth.ts             # HMAC cookie authentication
+  types.ts            # TypeScript types
+```

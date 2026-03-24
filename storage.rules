@@ -1,0 +1,14 @@
+rules_version = '2';
+service firebase.storage {
+  match /b/{bucket}/o {
+    match /logos/{allPaths=**} {
+      // Public read for logo images (displayed on generated sites)
+      allow read;
+      // Write only via Admin SDK (server-side upload route)
+      allow write: if false;
+    }
+    match /{allPaths=**} {
+      allow read, write: if false;
+    }
+  }
+}

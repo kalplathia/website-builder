@@ -8,7 +8,7 @@ export interface InviteData {
   createdAt: string;
 }
 
-export type TemplateType = "starter" | "bold" | "classic";
+export type TemplateType = "starter";
 
 export type SiteStatus = "pending" | "generating" | "live" | "error";
 

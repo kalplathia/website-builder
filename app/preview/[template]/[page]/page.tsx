@@ -4,7 +4,7 @@ import { PREVIEW_SITE } from "@/lib/preview-data";
 import { TemplateType } from "@/lib/types";
 import { Metadata } from "next";
 
-const validTemplates: TemplateType[] = ["starter", "bold", "classic"];
+const validTemplates: TemplateType[] = ["starter"];
 const validPages = ["about", "contact", "privacy", "terms"] as const;
 type PageType = (typeof validPages)[number];
 

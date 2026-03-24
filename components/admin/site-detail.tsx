@@ -6,8 +6,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
-import { TemplatePicker } from "./template-picker";
-import { SiteData, TemplateType } from "@/lib/types";
+import { SiteData } from "@/lib/types";
 import { HugeiconsIcon } from "@hugeicons/react";
 import { SparklesIcon, LinkSquareIcon, DeleteIcon, Building03Icon, MailIcon, Call02Icon, Location01Icon, Briefcase01Icon } from "@hugeicons/core-free-icons";
 
@@ -20,7 +19,6 @@ const statusConfig: Record<string, { label: string; dot: string; badge: string }
 
 export function SiteDetail({ site: initialSite }: { site: SiteData }) {
   const [site, setSite] = useState(initialSite);
-  const [template, setTemplate] = useState<TemplateType>(site.template);
   const [generating, setGenerating] = useState(false);
   const [message, setMessage] = useState("");
   const router = useRouter();
@@ -29,10 +27,10 @@ export function SiteDetail({ site: initialSite }: { site: SiteData }) {
   async function handleGenerate() {
     setGenerating(true); setMessage("");
     try {
-      await fetch("/api/sites", { method: "PUT", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ slug: site.slug, template }) });
-      const res = await fetch("/api/generate", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ slug: site.slug, template }) });
+      await fetch("/api/sites", { method: "PUT", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ slug: site.slug, template: "starter" }) });
+      const res = await fetch("/api/generate", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ slug: site.slug, template: "starter" }) });
       const data = await res.json();
-      if (res.ok) { setMessage(data.message); setSite({ ...site, status: "live", template }); router.refresh(); }
+      if (res.ok) { setMessage(data.message); setSite({ ...site, status: "live", template: "starter" }); router.refresh(); }
       else { setMessage(data.error || "Generation failed"); setSite({ ...site, status: "error" }); }
     } catch { setMessage("Network error. Please try again."); } finally { setGenerating(false); }
   }
@@ -88,16 +86,6 @@ export function SiteDetail({ site: initialSite }: { site: SiteData }) {
               </div>
             ))}
           </div>
-        </CardContent>
-      </Card>
-
-      {/* Template */}
-      <Card className="rounded-2xl">
-        <CardHeader className="pb-4">
-          <CardTitle className="text-[14px] font-bold font-heading">Choose Template</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <TemplatePicker selected={template} onSelect={setTemplate} />
         </CardContent>
       </Card>
 

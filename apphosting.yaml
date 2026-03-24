@@ -1,0 +1,16 @@
+runConfig:
+  minInstances: 0
+  maxInstances: 3
+  cpu: 1
+  memoryMiB: 512
+  concurrency: 80
+
+env:
+  - variable: OPENAI_API_KEY
+    secret: OPENAI_API_KEY
+
+  - variable: ADMIN_PASSWORD
+    secret: ADMIN_PASSWORD
+
+  - variable: NEXT_PUBLIC_BASE_URL
+    value: https://website-builder-system.web.app

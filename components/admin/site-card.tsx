@@ -17,8 +17,6 @@ const statusConfig: Record<string, { label: string; dot: string; badge: string }
 
 const templateGradient: Record<string, string> = {
   starter: "from-gray-200 to-gray-300",
-  bold: "from-violet-500 to-pink-500",
-  classic: "from-slate-600 to-slate-800",
 };
 
 export function SiteCard({ site }: { site: SiteData }) {

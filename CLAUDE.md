@@ -1,4 +1,4 @@
-@AGENTS.md
+<!-- Next.js 16 has breaking changes — APIs, conventions, and file structure may differ from training data. Read the relevant guide in `node_modules/next/dist/docs/` before writing any code. Heed deprecation notices. -->
 
 ## Project: AI Website Builder
 
@@ -9,13 +9,13 @@
 - **Auth** — simple password via `ADMIN_PASSWORD` env var, HMAC-signed cookies in `lib/auth.ts`
 - **Fonts** — Plus Jakarta Sans (headings `--font-heading`), Inter (body `--font-sans`), JetBrains Mono (`--font-mono`)
 - **Colors** — Violet Creative theme, white sidebar, OKLCH tokens in `app/globals.css`
-- **Storage** — JSON files in `data/sites/` and `data/invites/` (no database)
+- **Storage** — Firebase Firestore (`sites` + `invites` collections) + Firebase Storage (logo uploads)
+- **Deployment** — Firebase App Hosting (project: `website-builder-system`)
 
 ### Key Conventions
 - Admin pages use nested layout at `app/admin/layout.tsx` with white collapsible sidebar
 - Client-facing pages (`/sites/*`, `/submit/*`) are NOT behind auth
-- `lib/gemini.ts` uses OpenAI (not Gemini) — historical filename
-- Template system: 3 templates (starter, bold, classic) × 7 components each in `components/templates/`
+- Template system: 1 template (starter) × 7 components in `components/templates/starter/`
 - All admin components in `components/admin/`, UI primitives in `components/ui/`
 
 ### Hugeicons Pattern

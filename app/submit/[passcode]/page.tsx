@@ -33,27 +33,6 @@ const industries = [
   "Other",
 ];
 
-const templates = [
-  {
-    id: "starter",
-    name: "Starter",
-    desc: "Clean & minimal",
-    colors: "from-gray-50 to-gray-100 text-gray-400",
-  },
-  {
-    id: "bold",
-    name: "Bold",
-    desc: "Vibrant & modern",
-    colors: "from-violet-500 to-pink-500 text-white",
-  },
-  {
-    id: "classic",
-    name: "Classic",
-    desc: "Professional & timeless",
-    colors: "from-slate-700 to-slate-900 text-amber-200",
-  },
-];
-
 export default function SubmitPage() {
   const { passcode } = useParams<{ passcode: string }>();
   const [status, setStatus] = useState<Status>("loading");
@@ -67,7 +46,6 @@ export default function SubmitPage() {
   const [email, setEmail] = useState("");
   const [phone, setPhone] = useState("");
   const [address, setAddress] = useState("");
-  const [template, setTemplate] = useState("starter");
   const [logoFile, setLogoFile] = useState<File | null>(null);
   const [logoPreview, setLogoPreview] = useState("");
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -142,7 +120,7 @@ export default function SubmitPage() {
           phone,
           address,
           logo: logoUrl,
-          template,
+          template: "starter",
         }),
       });
 
@@ -356,39 +334,6 @@ export default function SubmitPage() {
                     placeholder="123 Main St, City, State"
                     className="mt-1.5"
                   />
-                </div>
-              </div>
-
-              {/* Template Picker */}
-              <div>
-                <Label>Preferred Template</Label>
-                <div className="grid grid-cols-3 gap-3 mt-2">
-                  {templates.map((t) => (
-                    <button
-                      key={t.id}
-                      type="button"
-                      onClick={() => setTemplate(t.id)}
-                      className={cn(
-                        "p-3 rounded-xl border-2 text-left transition-all",
-                        template === t.id
-                          ? "border-primary shadow-md"
-                          : "border-gray-200 hover:border-gray-300"
-                      )}
-                    >
-                      <div
-                        className={cn(
-                          "h-12 rounded-lg mb-2 flex items-center justify-center text-sm font-bold bg-gradient-to-br",
-                          t.colors
-                        )}
-                      >
-                        {t.name[0]}
-                      </div>
-                      <p className="text-xs font-medium">{t.name}</p>
-                      <p className="text-[10px] text-muted-foreground">
-                        {t.desc}
-                      </p>
-                    </button>
-                  ))}
                 </div>
               </div>
 

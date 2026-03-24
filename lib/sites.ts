@@ -1,12 +1,7 @@
-import fs from "fs/promises";
-import path from "path";
+import { db } from "./firebase";
 import { SiteData } from "./types";
 
-const DATA_DIR = path.join(process.cwd(), "data", "sites");
-
-async function ensureDir() {
-  await fs.mkdir(DATA_DIR, { recursive: true });
-}
+const sitesCol = db.collection("sites");
 
 function slugify(name: string): string {
   return name
@@ -16,37 +11,19 @@ function slugify(name: string): string {
 }
 
 export async function getAllSites(): Promise<SiteData[]> {
-  await ensureDir();
-  const files = await fs.readdir(DATA_DIR);
-  const jsonFiles = files.filter((f) => f.endsWith(".json"));
-
-  const sites = await Promise.all(
-    jsonFiles.map(async (file) => {
-      const content = await fs.readFile(path.join(DATA_DIR, file), "utf-8");
-      return JSON.parse(content) as SiteData;
-    })
-  );
-
-  return sites.sort(
-    (a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
-  );
+  const snapshot = await sitesCol.orderBy("createdAt", "desc").get();
+  return snapshot.docs.map((doc) => doc.data() as SiteData);
 }
 
 export async function getSite(slug: string): Promise<SiteData | null> {
-  await ensureDir();
-  const filePath = path.join(DATA_DIR, `${slug}.json`);
-  try {
-    const content = await fs.readFile(filePath, "utf-8");
-    return JSON.parse(content) as SiteData;
-  } catch {
-    return null;
-  }
+  const doc = await sitesCol.doc(slug).get();
+  if (!doc.exists) return null;
+  return doc.data() as SiteData;
 }
 
 export async function saveSite(site: SiteData): Promise<void> {
-  await ensureDir();
-  const filePath = path.join(DATA_DIR, `${site.slug}.json`);
-  await fs.writeFile(filePath, JSON.stringify(site, null, 2));
+  // JSON round-trip strips undefined values (Firestore rejects undefined)
+  await sitesCol.doc(site.slug).set(JSON.parse(JSON.stringify(site)));
 }
 
 export async function createSiteFromForm(formData: {
@@ -81,14 +58,10 @@ export async function createSiteFromForm(formData: {
 }
 
 export async function deleteSite(slug: string): Promise<boolean> {
-  await ensureDir();
-  const filePath = path.join(DATA_DIR, `${slug}.json`);
-  try {
-    await fs.unlink(filePath);
-    return true;
-  } catch {
-    return false;
-  }
+  const doc = await sitesCol.doc(slug).get();
+  if (!doc.exists) return false;
+  await sitesCol.doc(slug).delete();
+  return true;
 }
 
 export { slugify };

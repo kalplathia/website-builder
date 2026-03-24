@@ -1,13 +1,8 @@
-import fs from "fs/promises";
-import path from "path";
 import crypto from "crypto";
+import { db } from "./firebase";
 import { InviteData } from "./types";
 
-const INVITES_DIR = path.join(process.cwd(), "data", "invites");
-
-async function ensureDir() {
-  await fs.mkdir(INVITES_DIR, { recursive: true });
-}
+const invitesCol = db.collection("invites");
 
 function generatePasscode(): string {
   return crypto.randomBytes(4).toString("hex"); // 8-char hex string
@@ -17,8 +12,6 @@ export async function createInvite(
   clientName: string,
   clientEmail: string
 ): Promise<InviteData> {
-  await ensureDir();
-
   const invite: InviteData = {
     passcode: generatePasscode(),
     clientName,
@@ -29,27 +22,16 @@ export async function createInvite(
     createdAt: new Date().toISOString(),
   };
 
-  await fs.writeFile(
-    path.join(INVITES_DIR, `${invite.passcode}.json`),
-    JSON.stringify(invite, null, 2)
-  );
-
+  await invitesCol.doc(invite.passcode).set(JSON.parse(JSON.stringify(invite)));
   return invite;
 }
 
 export async function getInvite(
   passcode: string
 ): Promise<InviteData | null> {
-  await ensureDir();
-  try {
-    const content = await fs.readFile(
-      path.join(INVITES_DIR, `${passcode}.json`),
-      "utf-8"
-    );
-    return JSON.parse(content) as InviteData;
-  } catch {
-    return null;
-  }
+  const doc = await invitesCol.doc(passcode).get();
+  if (!doc.exists) return null;
+  return doc.data() as InviteData;
 }
 
 export async function markInviteUsed(
@@ -59,43 +41,21 @@ export async function markInviteUsed(
   const invite = await getInvite(passcode);
   if (!invite) return;
 
-  invite.used = true;
-  invite.usedAt = new Date().toISOString();
-  invite.siteSlug = siteSlug;
-
-  await fs.writeFile(
-    path.join(INVITES_DIR, `${passcode}.json`),
-    JSON.stringify(invite, null, 2)
-  );
+  await invitesCol.doc(passcode).update({
+    used: true,
+    usedAt: new Date().toISOString(),
+    siteSlug,
+  });
 }
 
 export async function getAllInvites(): Promise<InviteData[]> {
-  await ensureDir();
-  const files = await fs.readdir(INVITES_DIR);
-  const jsonFiles = files.filter((f) => f.endsWith(".json"));
-
-  const invites = await Promise.all(
-    jsonFiles.map(async (file) => {
-      const content = await fs.readFile(
-        path.join(INVITES_DIR, file),
-        "utf-8"
-      );
-      return JSON.parse(content) as InviteData;
-    })
-  );
-
-  return invites.sort(
-    (a, b) =>
-      new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
-  );
+  const snapshot = await invitesCol.orderBy("createdAt", "desc").get();
+  return snapshot.docs.map((doc) => doc.data() as InviteData);
 }
 
 export async function deleteInvite(passcode: string): Promise<boolean> {
-  await ensureDir();
-  try {
-    await fs.unlink(path.join(INVITES_DIR, `${passcode}.json`));
-    return true;
-  } catch {
-    return false;
-  }
+  const doc = await invitesCol.doc(passcode).get();
+  if (!doc.exists) return false;
+  await invitesCol.doc(passcode).delete();
+  return true;
 }

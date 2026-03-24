@@ -1,6 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import fs from "fs/promises";
-import path from "path";
+import { bucket } from "@/lib/firebase";
 
 export async function POST(request: NextRequest) {
   try {
@@ -27,15 +26,20 @@ export async function POST(request: NextRequest) {
     }
 
     const ext = file.name.split(".").pop() || "png";
-    const filename = `${Date.now()}-${Math.random().toString(36).slice(2, 8)}.${ext}`;
-
-    const uploadDir = path.join(process.cwd(), "public", "uploads");
-    await fs.mkdir(uploadDir, { recursive: true });
+    const filename = `logos/${Date.now()}-${Math.random().toString(36).slice(2, 8)}.${ext}`;
 
     const buffer = Buffer.from(await file.arrayBuffer());
-    await fs.writeFile(path.join(uploadDir, filename), buffer);
+    const fileRef = bucket.file(filename);
 
-    return NextResponse.json({ url: `/uploads/${filename}` });
+    await fileRef.save(buffer, {
+      metadata: { contentType: file.type },
+    });
+
+    await fileRef.makePublic();
+
+    const publicUrl = `https://storage.googleapis.com/${bucket.name}/${filename}`;
+
+    return NextResponse.json({ url: publicUrl });
   } catch (error) {
     console.error("Upload error:", error);
     return NextResponse.json(
