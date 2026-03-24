@@ -8,7 +8,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 import { SiteData } from "@/lib/types";
 import { HugeiconsIcon } from "@hugeicons/react";
-import { SparklesIcon, LinkSquareIcon, DeleteIcon, Building03Icon, MailIcon, Call02Icon, Location01Icon, Briefcase01Icon } from "@hugeicons/core-free-icons";
+import { SparklesIcon, LinkSquareIcon, DeleteIcon, Building03Icon, MailIcon, Call02Icon, Location01Icon, Briefcase01Icon, Download01Icon } from "@hugeicons/core-free-icons";
 
 const statusConfig: Record<string, { label: string; dot: string; badge: string }> = {
   pending: { label: "Pending", dot: "bg-amber-400", badge: "bg-amber-50 text-amber-700 border-amber-200" },
@@ -20,6 +20,7 @@ const statusConfig: Record<string, { label: string; dot: string; badge: string }
 export function SiteDetail({ site: initialSite }: { site: SiteData }) {
   const [site, setSite] = useState(initialSite);
   const [generating, setGenerating] = useState(false);
+  const [exporting, setExporting] = useState(false);
   const [message, setMessage] = useState("");
   const router = useRouter();
   const status = statusConfig[site.status] || statusConfig.pending;
@@ -39,6 +40,35 @@ export function SiteDetail({ site: initialSite }: { site: SiteData }) {
     if (!confirm(`Delete "${site.businessName}"? This cannot be undone.`)) return;
     const res = await fetch(`/api/sites?slug=${site.slug}`, { method: "DELETE" });
     if (res.ok) router.push("/admin/sites");
+  }
+
+  async function handleExport() {
+    setExporting(true);
+    try {
+      const res = await fetch("/api/export", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ slug: site.slug }),
+      });
+      if (!res.ok) {
+        const data = await res.json();
+        setMessage(data.error || "Export failed");
+        return;
+      }
+      const blob = await res.blob();
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = `${site.slug}-website.zip`;
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      URL.revokeObjectURL(url);
+    } catch {
+      setMessage("Export failed. Please try again.");
+    } finally {
+      setExporting(false);
+    }
   }
 
   const infoItems = [
@@ -101,11 +131,20 @@ export function SiteDetail({ site: initialSite }: { site: SiteData }) {
               )}
             </Button>
             {site.status === "live" && (
-              <a href={`/sites/${site.slug}`} target="_blank" rel="noopener noreferrer">
-                <Button variant="outline" size="lg">
-                  <HugeiconsIcon icon={LinkSquareIcon} size={16} color="currentColor" className="mr-2" />View Live Site
+              <>
+                <a href={`/sites/${site.slug}`} target="_blank" rel="noopener noreferrer">
+                  <Button variant="outline" size="lg">
+                    <HugeiconsIcon icon={LinkSquareIcon} size={16} color="currentColor" className="mr-2" />View Live Site
+                  </Button>
+                </a>
+                <Button variant="outline" size="lg" onClick={handleExport} disabled={exporting}>
+                  {exporting ? (
+                    <><svg className="animate-spin w-4 h-4 mr-2" viewBox="0 0 24 24" fill="none"><circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"/><path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"/></svg>Exporting...</>
+                  ) : (
+                    <><HugeiconsIcon icon={Download01Icon} size={16} color="currentColor" className="mr-2" />Export ZIP</>
+                  )}
                 </Button>
-              </a>
+              </>
             )}
             <div className="sm:ml-auto">
               <Button variant="ghost" size="sm" onClick={handleDelete} className="text-muted-foreground hover:text-red-600 hover:bg-red-50">

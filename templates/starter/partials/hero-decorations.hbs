@@ -1,0 +1,35 @@
+{{!-- Hero Blob: animated SVG ellipses --}}
+{{#if showBlob}}
+<div class="absolute inset-0 overflow-hidden pointer-events-none hidden md:block" aria-hidden="true">
+  <svg class="absolute -top-32 -right-32 w-[700px] h-[700px] animate-blob-float opacity-60" viewBox="0 0 700 700" fill="none">
+    <ellipse cx="350" cy="300" rx="280" ry="240" fill="rgba(124,58,237,0.05)" />
+    <ellipse cx="320" cy="360" rx="200" ry="180" fill="rgba(124,58,237,0.03)" />
+  </svg>
+  <svg class="absolute -bottom-40 -left-24 w-[500px] h-[500px] animate-blob-float-reverse opacity-50" viewBox="0 0 500 500" fill="none">
+    <ellipse cx="250" cy="250" rx="220" ry="180" fill="rgba(124,58,237,0.04)" />
+  </svg>
+</div>
+{{/if}}
+
+{{!-- Hero Grid: dot pattern --}}
+{{#if showGrid}}
+<div class="absolute inset-0 pointer-events-none opacity-[0.3]" aria-hidden="true">
+  <svg width="100%" height="100%">
+    <defs>
+      <pattern id="hero-dots-{{patternId}}" x="0" y="0" width="36" height="36" patternUnits="userSpaceOnUse">
+        <circle cx="1" cy="1" r="0.7" fill="rgba(124,58,237,0.25)" />
+      </pattern>
+    </defs>
+    <rect width="100%" height="100%" fill="url(#hero-dots-{{patternId}})" />
+  </svg>
+</div>
+{{/if}}
+
+{{!-- Section Divider: animated dashed line --}}
+{{#if showDivider}}
+<div class="relative h-px w-full max-w-5xl mx-auto px-6">
+  <svg class="w-full h-[1px]" preserveAspectRatio="none" viewBox="0 0 1200 1">
+    <line x1="0" y1="0.5" x2="1200" y2="0.5" stroke="rgba(124,58,237,0.12)" stroke-width="1" stroke-dasharray="8 6" class="animate-dash-flow" />
+  </svg>
+</div>
+{{/if}}

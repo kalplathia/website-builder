@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>{{pageTitle}}</title>
+  <meta name="description" content="{{site.description}}" />
+  <meta property="og:title" content="{{pageTitle}}" />
+  <meta property="og:description" content="{{site.description}}" />
+  <meta property="og:type" content="website" />
+  <meta property="og:site_name" content="{{site.businessName}}" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            heading: ['"Plus Jakarta Sans"', 'system-ui', 'sans-serif'],
+            sans: ['"Inter"', 'system-ui', 'sans-serif'],
+          },
+        },
+      },
+    };
+  </script>
+  <style>
+    body { font-family: 'Inter', system-ui, sans-serif; }
+
+    /* Scroll Reveal */
+    .sr-hidden {
+      opacity: 0;
+      transition-property: opacity, transform;
+      transition-timing-function: cubic-bezier(0.22, 1, 0.36, 1);
+      transition-duration: 700ms;
+    }
+    .sr-hidden[data-sr-direction="up"] { transform: translateY(28px); }
+    .sr-hidden[data-sr-direction="left"] { transform: translateX(-28px); }
+    .sr-hidden[data-sr-direction="right"] { transform: translateX(28px); }
+    .sr-hidden[data-sr-direction="scale"] { transform: scale(0.94); }
+    .sr-visible {
+      opacity: 1 !important;
+      transform: translate(0, 0) scale(1) !important;
+    }
+
+    /* SVG Animations */
+    @keyframes blob-float {
+      0%, 100% { transform: translate(0, 0) rotate(0deg); }
+      33% { transform: translate(12px, -18px) rotate(2deg); }
+      66% { transform: translate(-10px, 12px) rotate(-1.5deg); }
+    }
+    @keyframes blob-float-reverse {
+      0%, 100% { transform: translate(0, 0) rotate(0deg); }
+      33% { transform: translate(-14px, 12px) rotate(-2deg); }
+      66% { transform: translate(10px, -10px) rotate(1.5deg); }
+    }
+    @keyframes dash-flow {
+      0% { stroke-dashoffset: 0; }
+      100% { stroke-dashoffset: 28; }
+    }
+    .animate-blob-float { animation: blob-float 22s ease-in-out infinite; }
+    .animate-blob-float-reverse { animation: blob-float-reverse 26s ease-in-out infinite; }
+    .animate-dash-flow { animation: dash-flow 4s linear infinite; }
+
+    /* Prose styling for privacy/terms */
+    .prose h2 { font-family: 'Plus Jakarta Sans', system-ui, sans-serif; font-weight: 700; color: #111827; letter-spacing: -0.01em; font-size: 1.5rem; margin-top: 2rem; margin-bottom: 0.75rem; }
+    .prose h3 { font-family: 'Plus Jakarta Sans', system-ui, sans-serif; font-weight: 700; color: #111827; font-size: 1.25rem; margin-top: 1.5rem; margin-bottom: 0.5rem; }
+    .prose p { color: #4b5563; line-height: 1.75; margin-bottom: 1rem; }
+    .prose ul { color: #4b5563; padding-left: 1.5rem; margin-bottom: 1rem; }
+    .prose li { margin-bottom: 0.25rem; }
+    .prose a { color: #7c3aed; text-decoration: none; }
+    .prose a:hover { text-decoration: underline; }
+    .prose strong { color: #111827; }
+
+    /* Header transitions */
+    .header-scrolled {
+      background: rgba(255, 255, 255, 0.7) !important;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.04), 0 8px 24px rgba(124,58,237,0.03) !important;
+      border-bottom-color: rgba(229, 231, 235, 0.5) !important;
+    }
+
+    /* Mobile menu animation */
+    .mobile-menu-enter {
+      animation: fadeSlideDown 200ms ease-out;
+    }
+    @keyframes fadeSlideDown {
+      from { opacity: 0; transform: translateY(-8px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+  </style>
+</head>
+<body class="bg-white text-gray-900 antialiased">
+  <div class="min-h-screen flex flex-col">
+    {{> header}}
+    <main class="flex-1">
+      {{{content}}}
+    </main>
+    {{> footer}}
+  </div>
+
+  <script>
+    // Scroll reveal
+    (function() {
+      var els = document.querySelectorAll('.sr-hidden');
+      var observer = new IntersectionObserver(function(entries) {
+        entries.forEach(function(entry) {
+          if (entry.isIntersecting) {
+            var el = entry.target;
+            var delay = parseInt(el.getAttribute('data-sr-delay') || '0', 10);
+            if (delay > 0) {
+              setTimeout(function() { el.classList.add('sr-visible'); }, delay);
+            } else {
+              el.classList.add('sr-visible');
+            }
+            observer.unobserve(el);
+          }
+        });
+      }, { threshold: 0.12, rootMargin: '0px 0px -50px 0px' });
+      els.forEach(function(el) { observer.observe(el); });
+    })();
+
+    // Header scroll detection
+    (function() {
+      var header = document.getElementById('site-header');
+      if (!header) return;
+      window.addEventListener('scroll', function() {
+        if (window.scrollY > 8) {
+          header.classList.add('header-scrolled');
+        } else {
+          header.classList.remove('header-scrolled');
+        }
+      }, { passive: true });
+    })();
+
+    // Mobile menu toggle
+    (function() {
+      var btn = document.getElementById('mobile-menu-btn');
+      var menu = document.getElementById('mobile-menu');
+      var iconOpen = document.getElementById('menu-icon-open');
+      var iconClose = document.getElementById('menu-icon-close');
+      if (!btn || !menu) return;
+      btn.addEventListener('click', function() {
+        var isHidden = menu.classList.contains('hidden');
+        menu.classList.toggle('hidden');
+        if (iconOpen && iconClose) {
+          iconOpen.classList.toggle('hidden');
+          iconClose.classList.toggle('hidden');
+        }
+      });
+    })();
+  </script>
+</body>
+</html>
