@@ -5,17 +5,21 @@
 ### Quick Reference
 - **Next.js 16** — use `proxy.ts` (NOT `middleware.ts`), `cookies()` is async
 - **ShadCN v4** — base-ui, NOT radix. Use `render` prop, not `asChild`
-- **Icons** — hugeicons (`@hugeicons/react` + `@hugeicons/core-free-icons`), NOT lucide-react for admin
+- **Icons** — hugeicons (`@hugeicons/react` + `@hugeicons/core-free-icons`) for admin UI
 - **Auth** — simple password via `ADMIN_PASSWORD` env var, HMAC-signed cookies in `lib/auth.ts`
-- **Fonts** — Plus Jakarta Sans (headings `--font-heading`), Inter (body `--font-sans`), JetBrains Mono (`--font-mono`)
+- **Fonts** — Plus Jakarta Sans (headings), Inter (body), JetBrains Mono (code)
 - **Colors** — Violet Creative theme, white sidebar, OKLCH tokens in `app/globals.css`
 - **Storage** — Firebase Firestore (`sites` + `invites` collections) + Firebase Storage (logo uploads)
 - **Deployment** — Firebase App Hosting (project: `website-builder-system`)
+- **Templates** — Handlebars (`.hbs`) in `templates/starter/`, rendered via `lib/html-renderer.ts`
+- **Site rendering** — Route handlers (`route.ts`) return raw HTML, NOT React page components
+- **Export** — `app/api/export/route.ts` — ZIP download (5 HTML files + logo) via JSZip
 
 ### Key Conventions
 - Admin pages use nested layout at `app/admin/layout.tsx` with white collapsible sidebar
 - Client-facing pages (`/sites/*`, `/submit/*`) are NOT behind auth
-- Template system: 1 template (starter) × 7 components in `components/templates/starter/`
+- Template system: 1 template (starter) — Handlebars-based in `templates/starter/`
+- Site/preview routes are `route.ts` files returning `new Response(html)`, not `page.tsx`
 - All admin components in `components/admin/`, UI primitives in `components/ui/`
 
 ### Hugeicons Pattern
@@ -33,3 +37,21 @@ import { DashboardSquareEditIcon } from '@hugeicons/core-free-icons'
 // Select — guard null values
 <Select onValueChange={(v) => setState(v ?? "")}>
 ```
+
+### Template System
+```
+templates/starter/
+  base.hbs              # HTML shell (Tailwind CDN, Google Fonts, scroll-reveal JS)
+  partials/header.hbs   # Glassmorphic sticky header + mobile menu
+  partials/footer.hbs   # Dark gradient 4-column footer
+  partials/hero-decorations.hbs  # SVG blobs, dot grid, section divider
+  pages/home.hbs        # Hero + Who We Are + Features + Stats + Testimonials + CTA
+  pages/about.hbs       # Hero + Story + Quote + Mission/Values
+  pages/contact.hbs     # Hero + Contact Info + Form
+  pages/privacy.hbs     # Back link + Title + prose content
+  pages/terms.hbs       # Back link + Title + prose content
+```
+
+Key rendering functions in `lib/html-renderer.ts`:
+- `renderPage(site, page, basePath)` — renders one page as full HTML
+- `renderForExport(site)` — renders all pages with relative links for ZIP export

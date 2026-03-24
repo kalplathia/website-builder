@@ -124,8 +124,8 @@ export default function AdminLoginPage() {
               <HugeiconsIcon icon={LayersIcon} size={20} color="white" />
             </div>
             <div>
-              <div className="text-white/90 text-sm font-semibold">3 Templates</div>
-              <div className="text-white/50 text-xs">Starter, Bold, Classic</div>
+              <div className="text-white/90 text-sm font-semibold">HTML Export</div>
+              <div className="text-white/50 text-xs">Download as ZIP</div>
             </div>
           </div>
         </div>

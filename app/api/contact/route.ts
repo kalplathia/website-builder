@@ -19,11 +19,6 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    // Log contact submission (upgrade to email service later)
-    // To send actual emails: install `resend`, add RESEND_API_KEY to .env.local,
-    // then replace the console.log below with:
-    //   const resend = new Resend(process.env.RESEND_API_KEY);
-    //   await resend.emails.send({ from: '...', to: '...', subject: '...', text: message });
     console.log("[Contact Form]", { siteSlug, name, email, message: message.slice(0, 200) });
 
     return NextResponse.json({ success: true, message: "Message sent successfully!" });

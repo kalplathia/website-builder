@@ -15,17 +15,13 @@ const statusConfig: Record<string, { label: string; dot: string; badge: string }
   error: { label: "Error", dot: "bg-red-400", badge: "bg-red-50 text-red-700 border-red-200" },
 };
 
-const templateGradient: Record<string, string> = {
-  starter: "from-gray-200 to-gray-300",
-};
-
 export function SiteCard({ site }: { site: SiteData }) {
   const status = statusConfig[site.status] || statusConfig.pending;
 
   return (
     <Link href={`/admin/${site.slug}`} className="group">
       <Card className="h-full transition-all duration-300 hover:shadow-md hover:border-violet-200 rounded-2xl overflow-hidden">
-        <div className={cn("h-1.5 bg-gradient-to-r", templateGradient[site.template] || templateGradient.starter)} />
+        <div className={cn("h-1.5 bg-gradient-to-r from-gray-200 to-gray-300")} />
         <CardHeader className="pb-2 pt-5">
           <div className="flex items-start justify-between gap-2">
             <CardTitle className="text-[14px] font-bold font-heading leading-snug line-clamp-1">
@@ -42,8 +38,8 @@ export function SiteCard({ site }: { site: SiteData }) {
             {site.description || "No description provided"}
           </p>
           <div className="flex items-center justify-between">
-            <span className="text-[11px] text-muted-foreground/70 font-medium capitalize">
-              {site.template} template
+            <span className="text-[11px] text-muted-foreground/70 font-medium">
+              Starter template
             </span>
             <div className="flex items-center gap-1 text-violet-500 opacity-0 group-hover:opacity-100 transition-all duration-200 text-[11px] font-medium">
               Manage

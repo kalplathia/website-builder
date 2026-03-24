@@ -1,12 +1,13 @@
 # AI Website Builder
 
-An AI-powered website builder platform. Admins create invite passcodes, clients submit business details via a passcode-protected form, and AI generates complete 5-page websites (Home, About, Contact, Privacy, Terms).
+An AI-powered website builder platform. Admins create invite passcodes, clients submit business details via a passcode-protected form, and AI generates complete 5-page websites (Home, About, Contact, Privacy, Terms). Sites render as static HTML and can be exported as standalone ZIP files.
 
 ## Tech Stack
 
 - **Framework**: Next.js 16 (App Router, Turbopack)
 - **UI**: ShadCN v4 + Tailwind CSS v4
 - **AI**: OpenAI GPT-4o-mini
+- **Templates**: Handlebars (.hbs) + Tailwind CDN
 - **Database**: Firebase Firestore
 - **File Storage**: Firebase Storage
 - **Deployment**: Firebase App Hosting
@@ -27,14 +28,13 @@ Create `.env.local`:
 ```env
 OPENAI_API_KEY=your-openai-api-key
 ADMIN_PASSWORD=your-admin-password
-GOOGLE_APPLICATION_CREDENTIALS=./service-account.json
+NEXT_PUBLIC_BASE_URL=http://localhost:3000
+FIREBASE_SERVICE_ACCOUNT_KEY={"type":"service_account",...}
 ```
 
-### 3. Firebase service account (local dev)
+For local dev, set `FIREBASE_SERVICE_ACCOUNT_KEY` to the full JSON string of your Firebase service account key (download from Firebase Console > Project Settings > Service Accounts).
 
-Download from Firebase Console > Project Settings > Service Accounts > "Generate new private key". Save as `service-account.json` in the project root.
-
-### 4. Run development server
+### 3. Run development server
 
 ```bash
 npm run dev
@@ -66,21 +66,36 @@ firebase deploy --only firestore:rules,storage --project website-builder-system
 ## Project Structure
 
 ```
-app/                  # Next.js routes
-  admin/              # Admin dashboard, sites, invites (auth-protected)
-  api/                # API routes (sites, invites, generate, upload, auth)
-  sites/[slug]/       # Public generated websites
-  submit/[passcode]/  # Client submission form
-  preview/[template]/ # Template previews
-components/           # Shared components
-  admin/              # Admin UI components
-  templates/          # Starter template (7 page components)
-  ui/                 # ShadCN primitives
-lib/                  # Utilities
-  firebase.ts         # Firebase Admin SDK init
-  sites.ts            # Site CRUD (Firestore)
-  invites.ts          # Invite management (Firestore)
-  ai.ts               # OpenAI content generation
-  auth.ts             # HMAC cookie authentication
-  types.ts            # TypeScript types
+app/                    # Next.js routes
+  admin/                # Admin dashboard, sites, invites (auth-protected)
+  api/                  # API routes (sites, invites, generate, export, upload, auth)
+  sites/[slug]/         # Public generated websites (route handlers, raw HTML)
+  submit/[passcode]/    # Client submission form
+  preview/[template]/   # Template previews (route handlers, raw HTML)
+templates/              # Handlebars HTML templates
+  starter/
+    base.hbs            # HTML document shell (Tailwind CDN, fonts, JS)
+    partials/           # Header, footer, hero decorations
+    pages/              # Home, about, contact, privacy, terms
+components/             # Shared components
+  admin/                # Admin UI components
+  ui/                   # ShadCN primitives
+lib/                    # Utilities
+  html-renderer.ts      # Handlebars rendering engine
+  firebase.ts           # Firebase Admin SDK init
+  sites.ts              # Site CRUD (Firestore)
+  invites.ts            # Invite management (Firestore)
+  ai.ts                 # OpenAI content generation
+  auth.ts               # HMAC cookie authentication
+  types.ts              # TypeScript types
+  preview-data.ts       # Preview site data (Acme Studio)
 ```
+
+## Features
+
+- **AI Generation**: GPT-4o-mini generates all page content from business details
+- **HTML Templates**: Handlebars-based templates with Tailwind CDN styling
+- **ZIP Export**: Download any live site as a standalone static website
+- **Invite System**: Passcode-protected client submission forms
+- **Admin Dashboard**: Manage sites, invites, generate/regenerate content
+- **Preview**: Live preview of templates with sample data at `/preview/starter`

@@ -205,18 +205,6 @@ export function renderPage(site: SiteData, page: PageType, basePath: string): st
   });
 }
 
-export function renderAllPages(site: SiteData, basePath: string): Record<string, string> {
-  const pages: PageType[] = ["home", "about", "contact", "privacy", "terms"];
-  const result: Record<string, string> = {};
-
-  for (const page of pages) {
-    const filename = page === "home" ? "index.html" : `${page}.html`;
-    result[filename] = renderPage(site, page, basePath);
-  }
-
-  return result;
-}
-
 export function renderForExport(site: SiteData): Record<string, string> {
   // Clear and re-register helpers for export context
   Handlebars.unregisterHelper("currentYear");

@@ -1,11 +1,9 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getSite, saveSite } from "@/lib/sites";
 import { generateSiteContent } from "@/lib/ai";
-import { TemplateType } from "@/lib/types";
-
 export async function POST(request: NextRequest) {
   try {
-    const { slug, template } = await request.json();
+    const { slug } = await request.json();
 
     if (!slug) {
       return NextResponse.json({ error: "Slug is required" }, { status: 400 });
@@ -16,11 +14,7 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: "Site not found" }, { status: 404 });
     }
 
-    // Update status and template
     site.status = "generating";
-    if (template) {
-      site.template = template as TemplateType;
-    }
     await saveSite(site);
 
     // Generate content with AI

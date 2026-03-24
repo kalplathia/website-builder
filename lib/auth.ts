@@ -18,30 +18,6 @@ export function createSessionValue(): string {
   return `${token}.${signature}`;
 }
 
-export function verifySessionValue(sessionValue: string): boolean {
-  try {
-    const dotIndex = sessionValue.indexOf(".");
-    if (dotIndex === -1) return false;
-
-    const token = sessionValue.slice(0, dotIndex);
-    const signature = sessionValue.slice(dotIndex + 1);
-
-    if (!token || !signature) return false;
-
-    const expectedSignature = crypto
-      .createHmac("sha256", process.env.ADMIN_PASSWORD || "")
-      .update(token)
-      .digest("hex");
-
-    return crypto.timingSafeEqual(
-      Buffer.from(signature, "hex"),
-      Buffer.from(expectedSignature, "hex")
-    );
-  } catch {
-    return false;
-  }
-}
-
 export const sessionCookieOptions = {
   httpOnly: true,
   secure: process.env.NODE_ENV === "production",

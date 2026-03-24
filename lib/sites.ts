@@ -34,7 +34,6 @@ export async function createSiteFromForm(formData: {
   phone: string;
   address: string;
   logo?: string;
-  template?: string;
 }): Promise<SiteData> {
   const slug = slugify(formData.businessName);
 
@@ -47,7 +46,7 @@ export async function createSiteFromForm(formData: {
     address: formData.address || "",
     description: formData.description || "",
     industry: formData.industry || "General",
-    template: (formData.template as SiteData["template"]) || "starter",
+    template: "starter",
     status: "pending",
     createdAt: new Date().toISOString(),
     pages: {},
@@ -64,4 +63,3 @@ export async function deleteSite(slug: string): Promise<boolean> {
   return true;
 }
 
-export { slugify };

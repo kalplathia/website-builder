@@ -28,5 +28,5 @@ function initFirebase() {
 const app = initFirebase();
 
 export const db = getFirestore(app);
-export const storage = getStorage(app);
+const storage = getStorage(app);
 export const bucket = storage.bucket();

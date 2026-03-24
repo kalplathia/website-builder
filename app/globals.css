@@ -1,8 +1,6 @@
 @import "tailwindcss";
 @import "tw-animate-css";
 @import "shadcn/tailwind.css";
-@plugin "@tailwindcss/typography";
-
 @custom-variant dark (&:is(.dark *));
 
 @theme inline {
@@ -128,62 +126,4 @@
   html {
     @apply font-sans;
   }
-}
-
-/* ── Scroll Reveal System ── */
-.sr-hidden {
-  opacity: 0;
-  transition-property: opacity, transform;
-  transition-timing-function: cubic-bezier(0.22, 1, 0.36, 1);
-}
-
-.sr-hidden[data-sr-direction="up"] {
-  transform: translateY(28px);
-}
-
-.sr-hidden[data-sr-direction="left"] {
-  transform: translateX(-28px);
-}
-
-.sr-hidden[data-sr-direction="right"] {
-  transform: translateX(28px);
-}
-
-.sr-hidden[data-sr-direction="scale"] {
-  transform: scale(0.94);
-}
-
-.sr-visible {
-  opacity: 1 !important;
-  transform: translate(0, 0) scale(1) !important;
-}
-
-/* ── SVG Decoration Animations ── */
-@keyframes blob-float {
-  0%, 100% { transform: translate(0, 0) rotate(0deg); }
-  33% { transform: translate(12px, -18px) rotate(2deg); }
-  66% { transform: translate(-10px, 12px) rotate(-1.5deg); }
-}
-
-@keyframes blob-float-reverse {
-  0%, 100% { transform: translate(0, 0) rotate(0deg); }
-  33% { transform: translate(-14px, 12px) rotate(-2deg); }
-  66% { transform: translate(10px, -10px) rotate(1.5deg); }
-}
-
-@keyframes dash-flow {
-  0% { stroke-dashoffset: 0; }
-  100% { stroke-dashoffset: 28; }
-}
-
-.animate-blob-float {
-  animation: blob-float 22s ease-in-out infinite;
-}
-
-.animate-blob-float-reverse {
-  animation: blob-float-reverse 26s ease-in-out infinite;
-}
-
-.animate-dash-flow {
-  animation: dash-flow 4s linear infinite;
 }
