@@ -1,5 +1,8 @@
+"use client";
+
 import Link from "next/link";
 import { SiteData } from "@/lib/types";
+import { useSiteBasePath } from "@/lib/site-context";
 
 const iconMap: Record<string, string> = {
   star: "\u2605",
@@ -11,6 +14,7 @@ const iconMap: Record<string, string> = {
 };
 
 export function BoldHome({ site }: { site: SiteData }) {
+  const base = useSiteBasePath();
   const home = site.pages.home;
   if (!home) return null;
 
@@ -31,7 +35,7 @@ export function BoldHome({ site }: { site: SiteData }) {
           </p>
           <div className="mt-8">
             <Link
-              href={`/sites/${site.slug}/contact`}
+              href={`${base}/contact`}
               className="inline-flex h-12 px-8 items-center rounded-full bg-white text-violet-700 text-sm font-bold hover:bg-gray-100 transition-colors shadow-lg"
             >
               {home.hero.ctaText}
@@ -73,7 +77,7 @@ export function BoldHome({ site }: { site: SiteData }) {
           <p className="mt-4 text-gray-400">{home.cta.description}</p>
           <div className="mt-8">
             <Link
-              href={`/sites/${site.slug}/contact`}
+              href={`${base}/contact`}
               className="inline-flex h-12 px-8 items-center rounded-full bg-gradient-to-r from-violet-500 to-pink-500 text-white text-sm font-bold hover:from-violet-600 hover:to-pink-600 transition-all shadow-lg"
             >
               {home.cta.buttonText}

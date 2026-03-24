@@ -3,7 +3,7 @@
 import { TemplateType } from "@/lib/types";
 import { cn } from "@/lib/utils";
 import { HugeiconsIcon } from "@hugeicons/react";
-import { TickIcon } from "@hugeicons/core-free-icons";
+import { TickIcon, LinkSquareIcon } from "@hugeicons/core-free-icons";
 
 const templates: { id: TemplateType; name: string; description: string }[] = [
   { id: "starter", name: "Starter", description: "Clean minimal design with whitespace and soft tones" },
@@ -42,6 +42,16 @@ export function TemplatePicker({ selected, onSelect }: { selected: TemplateType;
             </div>
             <h3 className="font-bold font-heading text-[13px] mb-1">{t.name}</h3>
             <p className="text-[11px] text-muted-foreground leading-relaxed">{t.description}</p>
+            <a
+              href={`/preview/${t.id}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              onClick={(e) => e.stopPropagation()}
+              className="mt-2 text-[11px] text-violet-500 hover:text-violet-700 font-medium inline-flex items-center gap-1"
+            >
+              <HugeiconsIcon icon={LinkSquareIcon} size={12} color="currentColor" />
+              Preview Template
+            </a>
           </button>
         );
       })}

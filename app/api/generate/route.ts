@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getSite, saveSite } from "@/lib/sites";
-import { generateSiteContent } from "@/lib/gemini";
+import { generateSiteContent } from "@/lib/ai";
 import { TemplateType } from "@/lib/types";
 
 export async function POST(request: NextRequest) {
@@ -53,7 +53,7 @@ export async function POST(request: NextRequest) {
     } catch {}
 
     return NextResponse.json(
-      { error: "Failed to generate website content. Check your GEMINI_API_KEY." },
+      { error: "Failed to generate website content. Check your OPENAI_API_KEY." },
       { status: 500 }
     );
   }

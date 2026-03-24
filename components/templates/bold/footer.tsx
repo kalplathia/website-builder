@@ -1,8 +1,11 @@
+"use client";
+
 import Link from "next/link";
 import { SiteData } from "@/lib/types";
+import { useSiteBasePath } from "@/lib/site-context";
 
 export function BoldFooter({ site }: { site: SiteData }) {
-  const base = `/sites/${site.slug}`;
+  const base = useSiteBasePath();
 
   return (
     <footer className="bg-gray-950 text-white">

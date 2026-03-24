@@ -4,10 +4,11 @@ import Link from "next/link";
 import Image from "next/image";
 import { useState } from "react";
 import { SiteData } from "@/lib/types";
+import { useSiteBasePath } from "@/lib/site-context";
 
 export function ClassicHeader({ site }: { site: SiteData }) {
   const [open, setOpen] = useState(false);
-  const base = `/sites/${site.slug}`;
+  const base = useSiteBasePath();
 
   const links = [
     { href: base, label: "Home" },

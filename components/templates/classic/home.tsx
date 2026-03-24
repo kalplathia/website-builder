@@ -1,5 +1,8 @@
+"use client";
+
 import Link from "next/link";
 import { SiteData } from "@/lib/types";
+import { useSiteBasePath } from "@/lib/site-context";
 
 const iconMap: Record<string, string> = {
   star: "\u2605",
@@ -11,6 +14,7 @@ const iconMap: Record<string, string> = {
 };
 
 export function ClassicHome({ site }: { site: SiteData }) {
+  const base = useSiteBasePath();
   const home = site.pages.home;
   if (!home) return null;
 
@@ -29,7 +33,7 @@ export function ClassicHome({ site }: { site: SiteData }) {
           </p>
           <div className="mt-8">
             <Link
-              href={`/sites/${site.slug}/contact`}
+              href={`${base}/contact`}
               className="inline-flex h-12 px-8 items-center rounded bg-amber-500 text-slate-900 text-sm font-bold hover:bg-amber-400 transition-colors"
             >
               {home.hero.ctaText}
@@ -78,7 +82,7 @@ export function ClassicHome({ site }: { site: SiteData }) {
           <p className="mt-4 text-slate-400">{home.cta.description}</p>
           <div className="mt-8">
             <Link
-              href={`/sites/${site.slug}/contact`}
+              href={`${base}/contact`}
               className="inline-flex h-12 px-8 items-center rounded bg-amber-500 text-slate-900 text-sm font-bold hover:bg-amber-400 transition-colors"
             >
               {home.cta.buttonText}

@@ -1,4 +1,6 @@
 import { SiteData } from "@/lib/types";
+import { SiteBasePathProvider } from "@/lib/site-context";
+import { ScrollToTop } from "./scroll-to-top";
 
 // Starter
 import { StarterHeader } from "./starter/header";
@@ -68,9 +70,11 @@ const templates = {
 export function SiteRenderer({
   site,
   page,
+  basePath,
 }: {
   site: SiteData;
   page: PageType;
+  basePath?: string;
 }) {
   const template = templates[site.template] || templates.starter;
   const { Header, Footer } = template;
@@ -78,13 +82,18 @@ export function SiteRenderer({
 
   if (!PageComponent) return null;
 
+  const resolvedBasePath = basePath || `/sites/${site.slug}`;
+
   return (
-    <div className="min-h-screen flex flex-col">
-      <Header site={site} />
-      <main className="flex-1">
-        <PageComponent site={site} />
-      </main>
-      <Footer site={site} />
-    </div>
+    <SiteBasePathProvider basePath={resolvedBasePath}>
+      <ScrollToTop />
+      <div className="min-h-screen flex flex-col">
+        <Header site={site} />
+        <main className="flex-1">
+          <PageComponent site={site} />
+        </main>
+        <Footer site={site} />
+      </div>
+    </SiteBasePathProvider>
   );
 }
