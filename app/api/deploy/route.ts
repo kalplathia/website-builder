@@ -3,7 +3,7 @@ import { getSite, saveSite } from "@/lib/sites";
 import { renderForExport } from "@/lib/html-renderer";
 import { notFoundHtml } from "@/lib/not-found";
 import { repoExists, createRepo, pushFiles, FileEntry } from "@/lib/github";
-import { createVercelProject, getVercelProject } from "@/lib/vercel";
+import { createVercelProject, getVercelProject, triggerVercelDeployment } from "@/lib/vercel";
 
 export async function POST(req: NextRequest) {
   try {
@@ -106,7 +106,10 @@ export async function POST(req: NextRequest) {
 
     await pushFiles(owner, repoName, files, commitMessage);
 
-    // --- Step 5: Save deployment info ---
+    // --- Step 5: Trigger Vercel deployment explicitly ---
+    await triggerVercelDeployment(repoName, site.githubRepo!, "main");
+
+    // --- Step 6: Save deployment info ---
     site.lastDeployedAt = new Date().toISOString();
     site.deployStatus = "deployed";
     await saveSite(site);

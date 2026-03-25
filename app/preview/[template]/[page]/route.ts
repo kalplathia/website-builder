@@ -4,7 +4,7 @@ import { TemplateType } from "@/lib/types";
 import { renderPage, PageType } from "@/lib/html-renderer";
 import { notFoundResponse } from "@/lib/not-found";
 
-const validTemplates: TemplateType[] = ["starter"];
+const validTemplates: TemplateType[] = ["starter", "premium"];
 const validPages: PageType[] = ["about", "contact", "privacy", "terms"];
 
 export async function GET(

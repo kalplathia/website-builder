@@ -64,3 +64,43 @@ export async function getVercelProject(
   const data = await res.json();
   return { id: data.id, name: data.name };
 }
+
+/** Trigger a new Vercel deployment from the linked GitHub repo */
+export async function triggerVercelDeployment(
+  projectName: string,
+  githubRepoFullName: string,
+  ref: string = "main"
+): Promise<void> {
+  // Get the numeric GitHub repo ID (required by Vercel API)
+  const ghRes = await fetch(`https://api.github.com/repos/${githubRepoFullName}`, {
+    headers: {
+      Authorization: `Bearer ${process.env.GITHUB_TOKEN}`,
+      Accept: "application/vnd.github+json",
+    },
+  });
+  if (!ghRes.ok) {
+    console.error("Failed to get GitHub repo ID:", ghRes.status);
+    return;
+  }
+  const ghData = await ghRes.json();
+  const repoId = ghData.id;
+
+  const res = await fetch(`${VERCEL_API}/v13/deployments${queryParams()}`, {
+    method: "POST",
+    headers: headers(),
+    body: JSON.stringify({
+      name: projectName,
+      target: "production",
+      gitSource: {
+        type: "github",
+        repoId: String(repoId),
+        ref,
+      },
+    }),
+  });
+
+  if (!res.ok) {
+    const body = await res.json().catch(() => ({}));
+    console.error("Vercel deploy trigger failed:", res.status, body);
+  }
+}

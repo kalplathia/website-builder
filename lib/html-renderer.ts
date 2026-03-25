@@ -3,12 +3,15 @@ import fs from "fs";
 import path from "path";
 import { SiteData } from "./types";
 
-const TEMPLATES_DIR = path.join(process.cwd(), "templates", "starter");
 const isDev = process.env.NODE_ENV === "development";
 
-// Cache compiled templates
+function getTemplateDir(template: string): string {
+  return path.join(process.cwd(), "templates", template);
+}
+
+// Cache compiled templates keyed by "template/name"
 let templateCache: Map<string, HandlebarsTemplateDelegate> | null = null;
-let partialsRegistered = false;
+let partialsRegisteredFor: string | null = null;
 
 // ── Inline SVG Icons (Lucide-style, 24x24) ──
 const SVG_ICONS: Record<string, string> = {
@@ -119,6 +122,16 @@ function registerHelpers(forExport: boolean, basePath: string) {
   Handlebars.registerHelper("json", (context: unknown) => {
     return JSON.stringify(context);
   });
+
+  // Map feature icon names to Material Symbols names (for premium template)
+  const materialIconMap: Record<string, string> = {
+    star: "star", shield: "shield", zap: "bolt", heart: "favorite",
+    check: "check_circle", globe: "public", users: "group", award: "emoji_events",
+    clock: "schedule", target: "target", rocket: "rocket_launch", leaf: "eco",
+  };
+  Handlebars.registerHelper("materialIcon", (iconName: string) => {
+    return materialIconMap[iconName] || iconName || "star";
+  });
 }
 
 // ── Load and compile templates ──
@@ -127,10 +140,10 @@ function loadTemplate(filePath: string): HandlebarsTemplateDelegate {
   return Handlebars.compile(source);
 }
 
-function registerPartials() {
-  if (partialsRegistered && !isDev) return;
+function registerPartials(template: string) {
+  if (partialsRegisteredFor === template && !isDev) return;
 
-  const partialsDir = path.join(TEMPLATES_DIR, "partials");
+  const partialsDir = path.join(getTemplateDir(template), "partials");
   const partialFiles = fs.readdirSync(partialsDir).filter(f => f.endsWith(".hbs"));
 
   for (const file of partialFiles) {
@@ -139,24 +152,24 @@ function registerPartials() {
     Handlebars.registerPartial(name, source);
   }
 
-  partialsRegistered = true;
+  partialsRegisteredFor = template;
 }
 
-function getTemplate(name: string): HandlebarsTemplateDelegate {
+function getTemplate(template: string, name: string): HandlebarsTemplateDelegate {
+  const cacheKey = `${template}/${name}`;
   if (isDev) {
-    // Always reload in dev
-    return loadTemplate(path.join(TEMPLATES_DIR, name));
+    return loadTemplate(path.join(getTemplateDir(template), name));
   }
 
   if (!templateCache) {
     templateCache = new Map();
   }
 
-  if (!templateCache.has(name)) {
-    templateCache.set(name, loadTemplate(path.join(TEMPLATES_DIR, name)));
+  if (!templateCache.has(cacheKey)) {
+    templateCache.set(cacheKey, loadTemplate(path.join(getTemplateDir(template), name)));
   }
 
-  return templateCache.get(name)!;
+  return templateCache.get(cacheKey)!;
 }
 
 // ── Page title helpers ──
@@ -196,11 +209,13 @@ export function renderPage(site: SiteData, page: PageType, basePath: string): st
   Handlebars.unregisterHelper("subtract");
   Handlebars.unregisterHelper("math");
   Handlebars.unregisterHelper("json");
+  Handlebars.unregisterHelper("materialIcon");
   registerHelpers(false, basePath);
-  registerPartials();
+  const template = site.template || "starter";
+  registerPartials(template);
 
-  const pageTemplate = getTemplate(`pages/${page}.hbs`);
-  const baseTemplate = getTemplate("base.hbs");
+  const pageTemplate = getTemplate(template, `pages/${page}.hbs`);
+  const baseTemplate = getTemplate(template, "base.hbs");
 
   const pageContent = pageTemplate({ site, pages: site.pages, currentPage: page, basePath });
 
@@ -239,15 +254,17 @@ export function renderForExport(site: SiteData): Record<string, string> {
   Handlebars.unregisterHelper("subtract");
   Handlebars.unregisterHelper("math");
   Handlebars.unregisterHelper("json");
+  Handlebars.unregisterHelper("materialIcon");
   registerHelpers(true, ".");
-  registerPartials();
+  const template = site.template || "starter";
+  registerPartials(template);
 
   const pages: PageType[] = ["home", "about", "contact", "privacy", "terms"];
   const result: Record<string, string> = {};
 
   for (const page of pages) {
-    const pageTemplate = getTemplate(`pages/${page}.hbs`);
-    const baseTemplate = getTemplate("base.hbs");
+    const pageTemplate = getTemplate(template, `pages/${page}.hbs`);
+    const baseTemplate = getTemplate(template, "base.hbs");
 
     const pageContent = pageTemplate({ site, pages: site.pages, currentPage: page, basePath: "." });
     const filename = page === "home" ? "index.html" : `${page}.html`;

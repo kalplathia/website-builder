@@ -6,7 +6,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
-import { SiteData } from "@/lib/types";
+import { SiteData, TemplateType } from "@/lib/types";
 import { HugeiconsIcon } from "@hugeicons/react";
 import { SparklesIcon, LinkSquareIcon, DeleteIcon, Building03Icon, MailIcon, Call02Icon, Location01Icon, Briefcase01Icon, Download01Icon, CloudUploadIcon, Globe02Icon } from "@hugeicons/core-free-icons";
 
@@ -24,6 +24,7 @@ export function SiteDetail({ site: initialSite }: { site: SiteData }) {
   const [generating, setGenerating] = useState(false);
   const [exporting, setExporting] = useState(false);
   const [deploying, setDeploying] = useState(false);
+  const [template, setTemplate] = useState<TemplateType>(initialSite.template || "starter");
   const [message, setMessage] = useState("");
   const [deployMessage, setDeployMessage] = useState("");
   const router = useRouter();
@@ -62,15 +63,42 @@ export function SiteDetail({ site: initialSite }: { site: SiteData }) {
   async function handleGenerate() {
     setGenerating(true); setMessage(""); setDeployMessage("");
     try {
-      await fetch("/api/sites", { method: "PUT", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ slug: site.slug, template: "starter" }) });
-      const res = await fetch("/api/generate", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ slug: site.slug, template: "starter" }) });
+      await fetch("/api/sites", { method: "PUT", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ slug: site.slug, template }) });
+      const res = await fetch("/api/generate", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ slug: site.slug, template }) });
       const data = await res.json();
       if (res.ok) {
         setMessage(data.message);
-        setSite((prev) => ({ ...prev, status: "live", template: "starter" }));
+        setSite((prev) => ({ ...prev, status: "live", template }));
         router.refresh();
-        // Auto-trigger deploy after successful generation
-        setTimeout(() => handleDeploy(), 500);
+        // Auto-trigger deploy — set deploying immediately to prevent double-click
+        setDeploying(true);
+        setGenerating(false);
+        try {
+          const deployRes = await fetch("/api/deploy", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ slug: site.slug }),
+          });
+          const deployData = await deployRes.json();
+          if (deployRes.ok) {
+            setDeployMessage("Website deployed successfully!");
+            setSite((prev) => ({
+              ...prev,
+              githubRepo: deployData.githubUrl.replace("https://github.com/", ""),
+              vercelUrl: deployData.vercelUrl,
+              deployStatus: "deployed",
+              lastDeployedAt: new Date().toISOString(),
+            }));
+          } else {
+            setDeployMessage(deployData.error || "Deployment failed");
+            setSite((prev) => ({ ...prev, deployStatus: "failed" }));
+          }
+        } catch {
+          setDeployMessage("Network error during deployment.");
+        } finally {
+          setDeploying(false);
+        }
+        return;
       } else {
         setMessage(data.error || "Generation failed");
         setSite((prev) => ({ ...prev, status: "error" }));
@@ -158,6 +186,38 @@ export function SiteDetail({ site: initialSite }: { site: SiteData }) {
               </div>
             ))}
           </div>
+        </CardContent>
+      </Card>
+
+      {/* Template Selection */}
+      <Card className="rounded-2xl">
+        <CardHeader className="pb-4">
+          <CardTitle className="text-[14px] font-bold font-heading flex items-center gap-2">
+            Template
+          </CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="grid grid-cols-2 gap-3">
+            <button
+              type="button"
+              onClick={() => setTemplate("starter")}
+              className={`p-4 rounded-xl border-2 text-left transition-all ${template === "starter" ? "border-violet-500 bg-violet-50" : "border-border hover:border-violet-200"}`}
+            >
+              <div className="text-[13px] font-bold mb-1">Starter</div>
+              <div className="text-[11px] text-muted-foreground">Modern, violet theme with Plus Jakarta Sans</div>
+            </button>
+            <button
+              type="button"
+              onClick={() => setTemplate("premium")}
+              className={`p-4 rounded-xl border-2 text-left transition-all ${template === "premium" ? "border-violet-500 bg-violet-50" : "border-border hover:border-violet-200"}`}
+            >
+              <div className="text-[13px] font-bold mb-1">Premium</div>
+              <div className="text-[11px] text-muted-foreground">Editorial, warm tones with Noto Serif</div>
+            </button>
+          </div>
+          <a href={`/preview/${template}`} target="_blank" rel="noopener noreferrer" className="text-violet-600 text-[12px] mt-3 inline-flex items-center gap-1 hover:underline font-medium">
+            Preview {template} template <HugeiconsIcon icon={LinkSquareIcon} size={11} color="currentColor" />
+          </a>
         </CardContent>
       </Card>
 
@@ -262,7 +322,7 @@ export function SiteDetail({ site: initialSite }: { site: SiteData }) {
                 </div>
               )}
               {site.lastDeployedAt && (
-                <div className="text-[11px] text-muted-foreground/70 font-medium mt-2">
+                <div className="text-[11px] text-muted-foreground/70 font-medium mt-2" suppressHydrationWarning>
                   Last deployed: {new Date(site.lastDeployedAt).toLocaleString()}
                 </div>
               )}

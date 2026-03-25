@@ -1,5 +1,5 @@
 import { db } from "./firebase";
-import { SiteData } from "./types";
+import { SiteData, TemplateType } from "./types";
 
 const sitesCol = db.collection("sites");
 
@@ -34,6 +34,7 @@ export async function createSiteFromForm(formData: {
   phone: string;
   address: string;
   logo?: string;
+  template?: TemplateType;
 }): Promise<SiteData> {
   const slug = slugify(formData.businessName);
 
@@ -46,7 +47,7 @@ export async function createSiteFromForm(formData: {
     address: formData.address || "",
     description: formData.description || "",
     industry: formData.industry || "General",
-    template: "starter",
+    template: formData.template || "starter",
     status: "pending",
     createdAt: new Date().toISOString(),
     pages: {},

@@ -1,0 +1,18 @@
+<!-- Terms & Conditions -->
+<section class="pt-40 pb-32 px-8 bg-surface-container-lowest">
+  <div class="max-w-3xl mx-auto">
+    <header class="mb-16 sr-hidden" data-sr-direction="up">
+      <a href="{{pageLink 'home'}}" class="inline-flex items-center gap-2 font-label text-xs tracking-widest uppercase text-secondary hover:text-primary transition-colors mb-8">
+        <span class="material-symbols-outlined text-sm">arrow_back</span>
+        Back to Home
+      </a>
+      <h1 class="font-headline text-5xl font-bold text-primary mb-6">Terms & Conditions</h1>
+      {{#if pages.terms.lastUpdated}}
+      <p class="text-sm text-on-surface-variant">Last updated: {{pages.terms.lastUpdated}}</p>
+      {{/if}}
+    </header>
+    <div class="prose sr-hidden" data-sr-direction="up">
+      {{{pages.terms.content}}}
+    </div>
+  </div>
+</section>

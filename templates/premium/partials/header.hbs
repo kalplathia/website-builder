@@ -1,0 +1,27 @@
+<!-- Header -->
+<header class="bg-white/70 backdrop-blur-xl text-zinc-900 sticky top-0 z-50 border-b border-zinc-200/20">
+  <nav class="flex justify-between items-center w-full px-8 py-4 max-w-screen-2xl mx-auto">
+    <a href="{{pageLink 'home'}}" class="text-xl font-headline tracking-tighter font-bold text-zinc-900">{{site.businessName}}</a>
+    <div class="hidden md:flex items-center space-x-12">
+      <a class="{{#ifEq currentPage 'home'}}text-zinc-900 font-semibold border-b border-zinc-900 pb-1{{else}}text-zinc-500 font-body tracking-wide hover:text-zinc-900 transition-colors{{/ifEq}}" href="{{pageLink 'home'}}">Home</a>
+      <a class="{{#ifEq currentPage 'about'}}text-zinc-900 font-semibold border-b border-zinc-900 pb-1{{else}}text-zinc-500 font-body tracking-wide hover:text-zinc-900 transition-colors{{/ifEq}}" href="{{pageLink 'about'}}">About Us</a>
+      <a class="{{#ifEq currentPage 'contact'}}text-zinc-900 font-semibold border-b border-zinc-900 pb-1{{else}}text-zinc-500 font-body tracking-wide hover:text-zinc-900 transition-colors{{/ifEq}}" href="{{pageLink 'contact'}}">Contact Us</a>
+    </div>
+    <a href="{{pageLink 'contact'}}" class="hidden md:inline-block bg-primary text-on-primary px-8 py-2.5 font-label text-sm tracking-widest hover:opacity-80 transition-opacity duration-300 active:scale-95">
+      Inquire
+    </a>
+    <!-- Mobile menu button -->
+    <button id="mobile-menu-btn" class="md:hidden p-2">
+      <span class="material-symbols-outlined">menu</span>
+    </button>
+  </nav>
+  <!-- Mobile menu -->
+  <div id="mobile-menu" class="hidden md:hidden mobile-menu-enter border-t border-zinc-200/20 bg-white/95 backdrop-blur-xl">
+    <div class="flex flex-col px-8 py-6 space-y-4">
+      <a class="text-zinc-900 font-body tracking-wide py-2" href="{{pageLink 'home'}}">Home</a>
+      <a class="text-zinc-900 font-body tracking-wide py-2" href="{{pageLink 'about'}}">About Us</a>
+      <a class="text-zinc-900 font-body tracking-wide py-2" href="{{pageLink 'contact'}}">Contact Us</a>
+      <a href="{{pageLink 'contact'}}" class="bg-primary text-on-primary px-8 py-2.5 font-label text-sm tracking-widest text-center mt-2">Inquire</a>
+    </div>
+  </div>
+</header>

@@ -1,0 +1,198 @@
+<!-- Hero Section -->
+<section class="relative min-h-[90vh] flex flex-col justify-center overflow-hidden sr-hidden" data-sr-direction="up">
+  <div class="absolute inset-0 z-0">
+    <div class="w-full h-full bg-gradient-to-br from-surface-container-high via-surface-container-low to-background"></div>
+    <div class="absolute inset-0 bg-gradient-to-b from-transparent via-background/20 to-background"></div>
+  </div>
+  <div class="relative z-10 max-w-screen-2xl mx-auto px-8 w-full">
+    <div class="max-w-4xl">
+      {{#if pages.home.miniAbout}}
+      <span class="block font-label text-xs tracking-[0.4em] uppercase mb-6 text-on-surface-variant">{{pages.home.miniAbout.tagline}}</span>
+      {{/if}}
+      <h1 class="font-headline text-6xl md:text-8xl lg:text-9xl tracking-tighter leading-[0.9] mb-12 text-primary">
+        {{pages.home.hero.headline}}
+      </h1>
+      <div class="flex flex-col md:flex-row md:items-center gap-8">
+        <a href="{{pageLink 'about'}}" class="inline-flex items-center gap-4 bg-primary text-on-primary px-10 py-5 font-label text-sm tracking-[0.2em] uppercase hover:bg-primary-container transition-all group">
+          {{pages.home.hero.ctaText}}
+          <span class="material-symbols-outlined text-sm group-hover:translate-x-2 transition-transform">arrow_forward</span>
+        </a>
+        <p class="max-w-xs font-body text-on-surface-variant text-sm leading-relaxed tracking-wide">
+          {{pages.home.hero.subheadline}}
+        </p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Philosophy / Mini About Section -->
+{{#if pages.home.miniAbout}}
+<section class="py-32 bg-background overflow-hidden sr-hidden" data-sr-direction="up">
+  <div class="max-w-screen-2xl mx-auto px-8 grid grid-cols-1 lg:grid-cols-12 gap-16 items-center">
+    <div class="lg:col-span-7">
+      <h2 class="font-headline text-4xl md:text-6xl tracking-tight leading-tight mb-8">
+        {{pages.home.miniAbout.tagline}}
+      </h2>
+      <div class="editorial-line w-24 mb-12"></div>
+      <div class="space-y-8 text-on-surface-variant leading-loose tracking-wide md:text-lg lg:pr-24">
+        <p>{{pages.home.miniAbout.shortDescription}}</p>
+      </div>
+    </div>
+    <div class="lg:col-span-5 relative">
+      <div class="aspect-[4/5] bg-gradient-to-br from-surface-container-high to-surface-container overflow-hidden">
+        <div class="w-full h-full flex items-center justify-center">
+          <div class="text-center p-12">
+            {{#if pages.home.miniAbout.highlights}}
+            <div class="space-y-6">
+              {{#each pages.home.miniAbout.highlights}}
+              <p class="font-headline text-xl text-primary italic">{{this}}</p>
+              {{/each}}
+            </div>
+            {{/if}}
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+{{/if}}
+
+<!-- Features / Core Competencies -->
+{{#if pages.home.features}}
+<section class="py-32 bg-surface-container-low sr-hidden" data-sr-direction="up">
+  <div class="max-w-screen-2xl mx-auto px-8">
+    <div class="flex flex-col md:flex-row md:justify-between items-end mb-20 gap-8">
+      <div>
+        <span class="font-label text-xs tracking-[0.3em] uppercase text-secondary mb-4 block">Our Expertise</span>
+        <h2 class="font-headline text-5xl tracking-tighter">What We Do</h2>
+      </div>
+      <p class="max-w-sm text-on-surface-variant text-sm tracking-wide">{{site.description}}</p>
+    </div>
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-0 border-t border-outline-variant/20">
+      {{#each pages.home.features}}
+      <div class="group p-12 border-b md:border-b-0 {{#unless @last}}md:border-r{{/unless}} border-outline-variant/20 hover:bg-surface-container-lowest transition-colors duration-500 sr-hidden" data-sr-direction="up" data-sr-delay="{{math @index '*' 100}}">
+        <div class="mb-12">
+          <span class="material-symbols-outlined text-4xl font-light text-secondary">{{materialIcon icon}}</span>
+        </div>
+        <h3 class="font-headline text-2xl mb-6">{{title}}</h3>
+        <p class="text-on-surface-variant text-sm leading-relaxed mb-8">{{description}}</p>
+      </div>
+      {{/each}}
+    </div>
+  </div>
+</section>
+{{/if}}
+
+<!-- Stats Section -->
+{{#if pages.home.stats}}
+<section class="py-24 bg-background sr-hidden" data-sr-direction="up">
+  <div class="max-w-screen-2xl mx-auto px-8">
+    <div class="grid grid-cols-2 md:grid-cols-4 gap-8">
+      {{#each pages.home.stats}}
+      <div class="text-center p-8 border border-outline-variant/10 sr-hidden" data-sr-direction="scale" data-sr-delay="{{math @index '*' 100}}">
+        <div class="font-headline text-5xl md:text-6xl text-primary mb-4">{{value}}</div>
+        <p class="font-label text-xs tracking-[0.2em] uppercase text-secondary">{{label}}</p>
+      </div>
+      {{/each}}
+    </div>
+  </div>
+</section>
+{{/if}}
+
+<!-- Testimonial / Quote Section -->
+{{#if pages.home.testimonials}}
+<section class="py-40 bg-background sr-hidden" data-sr-direction="up">
+  <div class="max-w-4xl mx-auto px-8 text-center">
+    <span class="material-symbols-outlined text-6xl text-outline-variant/30 mb-12">format_quote</span>
+    <blockquote class="font-headline text-3xl md:text-5xl italic leading-tight text-primary mb-12 text-balanced">
+      "{{pages.home.testimonials.[0].quote}}"
+    </blockquote>
+    <cite class="not-italic font-label text-xs tracking-[0.4em] uppercase text-secondary">&mdash; {{pages.home.testimonials.[0].author}}, {{pages.home.testimonials.[0].role}}</cite>
+  </div>
+</section>
+{{/if}}
+
+<!-- CTA / Inquiry Section -->
+<section class="py-32 bg-primary text-on-primary sr-hidden" data-sr-direction="up">
+  <div class="max-w-screen-2xl mx-auto px-8 grid grid-cols-1 lg:grid-cols-2 gap-20 items-center">
+    <div>
+      <h2 class="font-headline text-5xl md:text-7xl mb-8 leading-none tracking-tighter">{{pages.home.cta.headline}}</h2>
+      <p class="text-on-primary-container text-lg max-w-md font-light leading-relaxed mb-12">{{pages.home.cta.description}}</p>
+      <div class="space-y-6">
+        {{#if site.email}}
+        <div class="flex items-center gap-6 group">
+          <div class="w-12 h-12 rounded-full border border-on-primary-container/30 flex items-center justify-center group-hover:bg-on-primary group-hover:text-primary transition-all">
+            <span class="material-symbols-outlined text-xl">mail</span>
+          </div>
+          <div>
+            <p class="text-xs uppercase tracking-widest text-on-primary-container">Email Us</p>
+            <p class="text-xl">{{site.email}}</p>
+          </div>
+        </div>
+        {{/if}}
+        {{#if site.phone}}
+        <div class="flex items-center gap-6 group">
+          <div class="w-12 h-12 rounded-full border border-on-primary-container/30 flex items-center justify-center group-hover:bg-on-primary group-hover:text-primary transition-all">
+            <span class="material-symbols-outlined text-xl">call</span>
+          </div>
+          <div>
+            <p class="text-xs uppercase tracking-widest text-on-primary-container">Direct Line</p>
+            <p class="text-xl">{{site.phone}}</p>
+          </div>
+        </div>
+        {{/if}}
+      </div>
+    </div>
+    <div class="bg-surface-container-lowest/5 p-8 md:p-12 backdrop-blur-sm border border-on-primary-container/10">
+      <form id="contact-form-cta" class="space-y-10">
+        <div class="relative">
+          <input class="peer block w-full bg-transparent border-0 border-b border-on-primary-container/30 py-4 px-0 focus:ring-0 focus:border-on-primary text-on-primary placeholder-transparent transition-all" id="cta-name" name="name" placeholder=" " type="text" required />
+          <label class="absolute left-0 top-4 -z-10 origin-[0] -translate-y-8 scale-75 transform font-label text-xs uppercase tracking-widest text-on-primary-container transition-all peer-placeholder-shown:translate-y-0 peer-placeholder-shown:scale-100 peer-focus:-translate-y-8 peer-focus:scale-75" for="cta-name">Full Name</label>
+        </div>
+        <div class="relative">
+          <input class="peer block w-full bg-transparent border-0 border-b border-on-primary-container/30 py-4 px-0 focus:ring-0 focus:border-on-primary text-on-primary placeholder-transparent transition-all" id="cta-email" name="email" placeholder=" " type="email" required />
+          <label class="absolute left-0 top-4 -z-10 origin-[0] -translate-y-8 scale-75 transform font-label text-xs uppercase tracking-widest text-on-primary-container transition-all peer-placeholder-shown:translate-y-0 peer-placeholder-shown:scale-100 peer-focus:-translate-y-8 peer-focus:scale-75" for="cta-email">Email Address</label>
+        </div>
+        <div class="relative">
+          <textarea class="peer block w-full bg-transparent border-0 border-b border-on-primary-container/30 py-4 px-0 focus:ring-0 focus:border-on-primary text-on-primary placeholder-transparent transition-all" id="cta-message" name="message" placeholder=" " rows="1"></textarea>
+          <label class="absolute left-0 top-4 -z-10 origin-[0] -translate-y-8 scale-75 transform font-label text-xs uppercase tracking-widest text-on-primary-container transition-all peer-placeholder-shown:translate-y-0 peer-placeholder-shown:scale-100 peer-focus:-translate-y-8 peer-focus:scale-75" for="cta-message">Your Message</label>
+        </div>
+        <button class="w-full bg-on-primary text-primary py-5 font-label text-sm uppercase tracking-[0.3em] hover:bg-surface-container-highest transition-colors" type="submit">
+          {{pages.home.cta.buttonText}}
+        </button>
+        <div id="cta-form-status" class="hidden text-center text-sm py-2"></div>
+      </form>
+    </div>
+  </div>
+</section>
+
+<script>
+(function() {
+  var form = document.getElementById('contact-form-cta');
+  if (!form) return;
+  form.addEventListener('submit', function(e) {
+    e.preventDefault();
+    var status = document.getElementById('cta-form-status');
+    var name = form.querySelector('[name="name"]').value;
+    var email = form.querySelector('[name="email"]').value;
+    var message = form.querySelector('[name="message"]').value;
+    status.className = 'text-center text-sm py-2 text-on-primary-container';
+    status.textContent = 'Sending...';
+    status.classList.remove('hidden');
+    fetch('/api/contact', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ name: name, email: email, message: message })
+    }).then(function(res) {
+      if (res.ok) {
+        status.textContent = 'Thank you! We\'ll be in touch soon.';
+        form.reset();
+      } else {
+        status.textContent = 'Something went wrong. Please try again.';
+      }
+    }).catch(function() {
+      status.textContent = 'Network error. Please try again.';
+    });
+  });
+})();
+</script>

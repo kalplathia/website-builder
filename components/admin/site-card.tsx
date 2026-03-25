@@ -39,7 +39,7 @@ export function SiteCard({ site }: { site: SiteData }) {
           </p>
           <div className="flex items-center justify-between">
             <span className="text-[11px] text-muted-foreground/70 font-medium">
-              Starter template
+              {site.template === "premium" ? "Premium" : "Starter"} template
             </span>
             <div className="flex items-center gap-1 text-violet-500 opacity-0 group-hover:opacity-100 transition-all duration-200 text-[11px] font-medium">
               Manage

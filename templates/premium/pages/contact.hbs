@@ -1,0 +1,105 @@
+<!-- Hero Section -->
+<section class="px-8 pt-24 pb-16 max-w-screen-2xl mx-auto grid grid-cols-1 md:grid-cols-12 gap-8 sr-hidden" data-sr-direction="up">
+  <div class="md:col-span-8">
+    <span class="font-label text-xs uppercase tracking-[0.3em] text-secondary mb-4 block">Connect with us</span>
+    <h1 class="font-headline text-6xl md:text-8xl lg:text-9xl text-primary -ml-1 md:-ml-2 tracking-tighter leading-[0.9]">
+      {{pages.contact.headline}}
+    </h1>
+  </div>
+  <div class="md:col-span-4 self-end pb-4">
+    <p class="font-body text-on-surface-variant text-lg leading-relaxed max-w-xs">
+      {{pages.contact.description}}
+    </p>
+  </div>
+</section>
+
+<!-- Contact Form & Info Grid -->
+<section class="px-8 py-20 max-w-screen-2xl mx-auto sr-hidden" data-sr-direction="up">
+  <div class="grid grid-cols-1 lg:grid-cols-12 gap-20">
+    <!-- Contact Form -->
+    <div class="lg:col-span-7">
+      <form id="contact-form" class="space-y-12">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-12">
+          <div class="relative group">
+            <input class="peer w-full bg-transparent border-0 border-b border-outline-variant py-3 focus:ring-0 focus:border-primary transition-colors placeholder-transparent" id="contact-name" name="name" placeholder=" " type="text" required />
+            <label class="absolute left-0 -top-3.5 text-on-surface-variant text-sm transition-all peer-placeholder-shown:text-base peer-placeholder-shown:text-on-surface-variant/60 peer-placeholder-shown:top-3 peer-focus:-top-3.5 peer-focus:text-primary peer-focus:text-sm uppercase tracking-widest font-label" for="contact-name">Full Name</label>
+          </div>
+          <div class="relative group">
+            <input class="peer w-full bg-transparent border-0 border-b border-outline-variant py-3 focus:ring-0 focus:border-primary transition-colors placeholder-transparent" id="contact-email" name="email" placeholder=" " type="email" required />
+            <label class="absolute left-0 -top-3.5 text-on-surface-variant text-sm transition-all peer-placeholder-shown:text-base peer-placeholder-shown:text-on-surface-variant/60 peer-placeholder-shown:top-3 peer-focus:-top-3.5 peer-focus:text-primary peer-focus:text-sm uppercase tracking-widest font-label" for="contact-email">Email Address</label>
+          </div>
+        </div>
+        <div class="relative group">
+          <input class="peer w-full bg-transparent border-0 border-b border-outline-variant py-3 focus:ring-0 focus:border-primary transition-colors placeholder-transparent" id="contact-subject" name="subject" placeholder=" " type="text" />
+          <label class="absolute left-0 -top-3.5 text-on-surface-variant text-sm transition-all peer-placeholder-shown:text-base peer-placeholder-shown:text-on-surface-variant/60 peer-placeholder-shown:top-3 peer-focus:-top-3.5 peer-focus:text-primary peer-focus:text-sm uppercase tracking-widest font-label" for="contact-subject">Subject</label>
+        </div>
+        <div class="relative group">
+          <textarea class="peer w-full bg-transparent border-0 border-b border-outline-variant py-3 focus:ring-0 focus:border-primary transition-colors placeholder-transparent resize-none" id="contact-message" name="message" placeholder=" " rows="4"></textarea>
+          <label class="absolute left-0 -top-3.5 text-on-surface-variant text-sm transition-all peer-placeholder-shown:text-base peer-placeholder-shown:text-on-surface-variant/60 peer-placeholder-shown:top-3 peer-focus:-top-3.5 peer-focus:text-primary peer-focus:text-sm uppercase tracking-widest font-label" for="contact-message">Your Message</label>
+        </div>
+        <button class="group flex items-center gap-4 py-4 px-1 border border-transparent hover:border-b-primary transition-all duration-500" type="submit">
+          <span class="font-headline text-2xl text-primary">Send Inquiry</span>
+          <span class="material-symbols-outlined text-primary group-hover:translate-x-2 transition-transform duration-300">arrow_forward</span>
+        </button>
+        <div id="contact-form-status" class="hidden text-sm py-2"></div>
+      </form>
+    </div>
+
+    <!-- Contact Info -->
+    <div class="lg:col-span-4 lg:col-start-9 flex flex-col justify-between">
+      <div class="space-y-16">
+        <div>
+          <h3 class="font-label text-xs uppercase tracking-[0.3em] text-secondary mb-6">Global Inquiries</h3>
+          <div class="space-y-4">
+            {{#if site.email}}
+            <p class="font-body text-xl text-primary font-medium">{{site.email}}</p>
+            {{/if}}
+            {{#if site.phone}}
+            <p class="font-body text-on-surface-variant">{{site.phone}}</p>
+            {{/if}}
+          </div>
+        </div>
+        {{#if site.address}}
+        <div>
+          <h3 class="font-label text-xs uppercase tracking-[0.3em] text-secondary mb-6">Visit Us</h3>
+          <p class="font-body text-on-surface text-lg">{{site.address}}</p>
+        </div>
+        {{/if}}
+      </div>
+    </div>
+  </div>
+</section>
+
+<script>
+(function() {
+  var form = document.getElementById('contact-form');
+  if (!form) return;
+  form.addEventListener('submit', function(e) {
+    e.preventDefault();
+    var status = document.getElementById('contact-form-status');
+    var name = form.querySelector('[name="name"]').value;
+    var email = form.querySelector('[name="email"]').value;
+    var message = form.querySelector('[name="message"]').value;
+    status.className = 'text-sm py-2 text-on-surface-variant';
+    status.textContent = 'Sending...';
+    status.classList.remove('hidden');
+    fetch('/api/contact', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ name: name, email: email, message: message })
+    }).then(function(res) {
+      if (res.ok) {
+        status.className = 'text-sm py-2 text-secondary';
+        status.textContent = 'Thank you! We\'ll be in touch soon.';
+        form.reset();
+      } else {
+        status.className = 'text-sm py-2 text-error';
+        status.textContent = 'Something went wrong. Please try again.';
+      }
+    }).catch(function() {
+      status.className = 'text-sm py-2 text-error';
+      status.textContent = 'Network error. Please try again.';
+    });
+  });
+})();
+</script>

@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html class="scroll-smooth" lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>{{pageTitle}}</title>
+  <meta name="description" content="{{pageMetaDescription}}" />
+  {{#if canonicalUrl}}<link rel="canonical" href="{{canonicalUrl}}" />{{/if}}
+
+  <!-- Open Graph -->
+  <meta property="og:title" content="{{pageTitle}}" />
+  <meta property="og:description" content="{{pageMetaDescription}}" />
+  <meta property="og:type" content="website" />
+  <meta property="og:site_name" content="{{site.businessName}}" />
+  {{#if canonicalUrl}}<meta property="og:url" content="{{canonicalUrl}}" />{{/if}}
+  {{#if site.logo}}<meta property="og:image" content="{{site.logo}}" />{{/if}}
+
+  <!-- Twitter Card -->
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="{{pageTitle}}" />
+  <meta name="twitter:description" content="{{pageMetaDescription}}" />
+  {{#if site.logo}}<meta name="twitter:image" content="{{site.logo}}" />{{/if}}
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Serif:ital,wght@0,400;0,700;1,400&family=Manrope:wght@200;300;400;500;600&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet" />
+  <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+  <script>
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          colors: {
+            "on-tertiary-fixed": "#091d2e",
+            "secondary-fixed-dim": "#dcc3a4",
+            "on-secondary-fixed": "#261906",
+            "surface-variant": "#e4e2dd",
+            "surface-container-low": "#f5f3ee",
+            "on-error": "#ffffff",
+            "outline": "#75777a",
+            "on-secondary-container": "#756148",
+            "inverse-primary": "#c8c6c5",
+            "primary": "#000101",
+            "background": "#fbf9f4",
+            "primary-fixed-dim": "#c8c6c5",
+            "on-primary-container": "#858483",
+            "on-secondary": "#ffffff",
+            "on-surface-variant": "#44474a",
+            "tertiary-fixed": "#d1e4fb",
+            "on-error-container": "#93000a",
+            "error-container": "#ffdad6",
+            "on-background": "#1b1c19",
+            "inverse-on-surface": "#f2f1ec",
+            "secondary-container": "#f9debe",
+            "outline-variant": "#c5c6ca",
+            "on-primary-fixed": "#1c1b1b",
+            "surface-container-high": "#eae8e3",
+            "on-tertiary": "#ffffff",
+            "tertiary-container": "#091d2e",
+            "surface-tint": "#5f5e5e",
+            "on-tertiary-container": "#73869a",
+            "on-secondary-fixed-variant": "#55442c",
+            "surface-container": "#f0eee9",
+            "surface-bright": "#fbf9f4",
+            "surface-container-highest": "#e4e2dd",
+            "on-primary": "#ffffff",
+            "surface": "#fbf9f4",
+            "secondary": "#6e5b42",
+            "error": "#ba1a1a",
+            "secondary-fixed": "#f9debe",
+            "tertiary-fixed-dim": "#b5c8df",
+            "on-surface": "#1b1c19",
+            "surface-container-lowest": "#ffffff",
+            "on-primary-fixed-variant": "#474646",
+            "primary-container": "#1c1c1c",
+            "surface-dim": "#dbdad5",
+            "primary-fixed": "#e5e2e1",
+            "inverse-surface": "#30312e",
+            "tertiary": "#000001",
+            "on-tertiary-fixed-variant": "#36485b"
+          },
+          fontFamily: {
+            "headline": ["Noto Serif"],
+            "body": ["Manrope"],
+            "label": ["Manrope"]
+          },
+          borderRadius: {"DEFAULT": "0.125rem", "lg": "0.25rem", "xl": "0.5rem", "full": "0.75rem"},
+        },
+      },
+    }
+  </script>
+  <style>
+    .material-symbols-outlined {
+      font-variation-settings: 'FILL' 0, 'wght' 200, 'GRAD' 0, 'opsz' 24;
+      font-size: 24px;
+    }
+    .editorial-line {
+      height: 1px;
+      background-color: #c5c6ca;
+      opacity: 0.2;
+    }
+    .editorial-grid {
+      display: grid;
+      grid-template-columns: repeat(12, 1fr);
+      gap: 1.5rem;
+    }
+    .text-balanced { text-wrap: balance; }
+
+    /* Scroll Reveal */
+    .sr-hidden {
+      opacity: 0;
+      transition-property: opacity, transform;
+      transition-timing-function: cubic-bezier(0.22, 1, 0.36, 1);
+      transition-duration: 700ms;
+    }
+    .sr-hidden[data-sr-direction="up"] { transform: translateY(28px); }
+    .sr-hidden[data-sr-direction="left"] { transform: translateX(-28px); }
+    .sr-hidden[data-sr-direction="right"] { transform: translateX(28px); }
+    .sr-hidden[data-sr-direction="scale"] { transform: scale(0.94); }
+    .sr-visible {
+      opacity: 1 !important;
+      transform: translate(0, 0) scale(1) !important;
+    }
+
+    /* Prose styling for privacy/terms */
+    .prose h2 { font-family: 'Noto Serif', serif; font-weight: 700; color: #000101; font-size: 1.5rem; margin-top: 2rem; margin-bottom: 0.75rem; }
+    .prose h3 { font-family: 'Noto Serif', serif; font-weight: 700; color: #000101; font-size: 1.25rem; margin-top: 1.5rem; margin-bottom: 0.5rem; }
+    .prose p { color: #44474a; line-height: 1.85; margin-bottom: 1rem; }
+    .prose ul { color: #44474a; padding-left: 1.5rem; margin-bottom: 1rem; }
+    .prose li { margin-bottom: 0.25rem; }
+    .prose a { color: #6e5b42; text-decoration: none; }
+    .prose a:hover { text-decoration: underline; }
+    .prose strong { color: #000101; }
+
+    /* Mobile menu */
+    .mobile-menu-enter { animation: fadeSlideDown 200ms ease-out; }
+    @keyframes fadeSlideDown {
+      from { opacity: 0; transform: translateY(-8px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+  </style>
+
+  <!-- JSON-LD Structured Data -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "Organization",
+    "name": "{{site.businessName}}",
+    "description": "{{site.description}}"{{#if site.logo}},
+    "logo": "{{site.logo}}"{{/if}}{{#if site.email}},
+    "email": "{{site.email}}"{{/if}}{{#if site.phone}},
+    "telephone": "{{site.phone}}"{{/if}}{{#if site.address}},
+    "address": "{{site.address}}"{{/if}}{{#if canonicalUrl}},
+    "url": "{{canonicalUrl}}"{{/if}}
+  }
+  </script>
+</head>
+<body class="bg-background text-on-background font-body selection:bg-secondary-container selection:text-on-secondary-container antialiased">
+  {{> header}}
+  <main>
+    {{{content}}}
+  </main>
+  {{> footer}}
+
+  <script>
+    // Scroll reveal
+    (function() {
+      var els = document.querySelectorAll('.sr-hidden');
+      var observer = new IntersectionObserver(function(entries) {
+        entries.forEach(function(entry) {
+          if (entry.isIntersecting) {
+            var el = entry.target;
+            var delay = parseInt(el.getAttribute('data-sr-delay') || '0', 10);
+            if (delay > 0) {
+              setTimeout(function() { el.classList.add('sr-visible'); }, delay);
+            } else {
+              el.classList.add('sr-visible');
+            }
+            observer.unobserve(el);
+          }
+        });
+      }, { threshold: 0.12, rootMargin: '0px 0px -50px 0px' });
+      els.forEach(function(el) { observer.observe(el); });
+    })();
+
+    // Mobile menu toggle
+    (function() {
+      var btn = document.getElementById('mobile-menu-btn');
+      var menu = document.getElementById('mobile-menu');
+      if (!btn || !menu) return;
+      btn.addEventListener('click', function() {
+        menu.classList.toggle('hidden');
+      });
+    })();
+  </script>
+</body>
+</html>

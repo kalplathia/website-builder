@@ -14,6 +14,7 @@ export async function POST(request: NextRequest) {
       phone,
       address,
       logo,
+      template,
     } = body;
 
     // Validate passcode
@@ -56,6 +57,7 @@ export async function POST(request: NextRequest) {
       phone,
       address,
       logo,
+      template,
     });
 
     // Mark invite as used

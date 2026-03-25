@@ -15,6 +15,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { cn } from "@/lib/utils";
+import type { TemplateType } from "@/lib/types";
 
 type Status = "loading" | "valid" | "invalid" | "used" | "submitting" | "success";
 
@@ -48,6 +49,7 @@ export default function SubmitPage() {
   const [address, setAddress] = useState("");
   const [logoFile, setLogoFile] = useState<File | null>(null);
   const [logoPreview, setLogoPreview] = useState("");
+  const [template, setTemplate] = useState<TemplateType>("starter");
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
@@ -120,7 +122,7 @@ export default function SubmitPage() {
           phone,
           address,
           logo: logoUrl,
-          template: "starter",
+          template,
         }),
       });
 
@@ -279,6 +281,35 @@ export default function SubmitPage() {
                   rows={4}
                   className="mt-1.5 resize-none"
                 />
+              </div>
+
+              {/* Template Selection */}
+              <div>
+                <Label>Website Style</Label>
+                <div className="grid grid-cols-2 gap-3 mt-2">
+                  <button
+                    type="button"
+                    onClick={() => setTemplate("starter")}
+                    className={cn(
+                      "p-4 rounded-xl border-2 text-left transition-all",
+                      template === "starter" ? "border-primary bg-violet-50" : "border-gray-200 hover:border-gray-300"
+                    )}
+                  >
+                    <div className="text-sm font-semibold mb-1">Starter</div>
+                    <div className="text-xs text-muted-foreground">Modern & vibrant with clean lines</div>
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setTemplate("premium")}
+                    className={cn(
+                      "p-4 rounded-xl border-2 text-left transition-all",
+                      template === "premium" ? "border-primary bg-violet-50" : "border-gray-200 hover:border-gray-300"
+                    )}
+                  >
+                    <div className="text-sm font-semibold mb-1">Premium</div>
+                    <div className="text-xs text-muted-foreground">Editorial & elegant with warm tones</div>
+                  </button>
+                </div>
               </div>
 
               {/* Industry & Email row */}
