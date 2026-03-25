@@ -8,7 +8,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 import { SiteData } from "@/lib/types";
 import { HugeiconsIcon } from "@hugeicons/react";
-import { SparklesIcon, LinkSquareIcon, DeleteIcon, Building03Icon, MailIcon, Call02Icon, Location01Icon, Briefcase01Icon, Download01Icon } from "@hugeicons/core-free-icons";
+import { SparklesIcon, LinkSquareIcon, DeleteIcon, Building03Icon, MailIcon, Call02Icon, Location01Icon, Briefcase01Icon, Download01Icon, CloudUploadIcon, Globe02Icon } from "@hugeicons/core-free-icons";
 
 const statusConfig: Record<string, { label: string; dot: string; badge: string }> = {
   pending: { label: "Pending", dot: "bg-amber-400", badge: "bg-amber-50 text-amber-700 border-amber-200" },
@@ -17,22 +17,64 @@ const statusConfig: Record<string, { label: string; dot: string; badge: string }
   error: { label: "Error", dot: "bg-red-400", badge: "bg-red-50 text-red-700 border-red-200" },
 };
 
+const spinner = <svg className="animate-spin w-4 h-4 mr-2" viewBox="0 0 24 24" fill="none"><circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"/><path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"/></svg>;
+
 export function SiteDetail({ site: initialSite }: { site: SiteData }) {
   const [site, setSite] = useState(initialSite);
   const [generating, setGenerating] = useState(false);
   const [exporting, setExporting] = useState(false);
+  const [deploying, setDeploying] = useState(false);
   const [message, setMessage] = useState("");
+  const [deployMessage, setDeployMessage] = useState("");
   const router = useRouter();
   const status = statusConfig[site.status] || statusConfig.pending;
 
+  async function handleDeploy() {
+    setDeploying(true);
+    setDeployMessage("");
+    try {
+      const res = await fetch("/api/deploy", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ slug: site.slug }),
+      });
+      const data = await res.json();
+      if (res.ok) {
+        setDeployMessage("Website deployed successfully!");
+        setSite((prev) => ({
+          ...prev,
+          githubRepo: data.githubUrl.replace("https://github.com/", ""),
+          vercelUrl: data.vercelUrl,
+          deployStatus: "deployed",
+          lastDeployedAt: new Date().toISOString(),
+        }));
+      } else {
+        setDeployMessage(data.error || "Deployment failed");
+        setSite((prev) => ({ ...prev, deployStatus: "failed" }));
+      }
+    } catch {
+      setDeployMessage("Network error during deployment.");
+    } finally {
+      setDeploying(false);
+    }
+  }
+
   async function handleGenerate() {
-    setGenerating(true); setMessage("");
+    setGenerating(true); setMessage(""); setDeployMessage("");
     try {
       await fetch("/api/sites", { method: "PUT", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ slug: site.slug, template: "starter" }) });
       const res = await fetch("/api/generate", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ slug: site.slug, template: "starter" }) });
       const data = await res.json();
-      if (res.ok) { setMessage(data.message); setSite({ ...site, status: "live", template: "starter" }); router.refresh(); }
-      else { setMessage(data.error || "Generation failed"); setSite({ ...site, status: "error" }); }
+      if (res.ok) {
+        setMessage(data.message);
+        setSite((prev) => ({ ...prev, status: "live", template: "starter" }));
+        router.refresh();
+        // Auto-trigger deploy after successful generation
+        setTimeout(() => handleDeploy(), 500);
+      } else {
+        setMessage(data.error || "Generation failed");
+        setSite((prev) => ({ ...prev, status: "error" }));
+      }
     } catch { setMessage("Network error. Please try again."); } finally { setGenerating(false); }
   }
 
@@ -122,10 +164,10 @@ export function SiteDetail({ site: initialSite }: { site: SiteData }) {
       {/* Actions */}
       <Card className="rounded-2xl">
         <CardContent className="pt-6">
-          <div className="flex flex-col sm:flex-row items-start sm:items-center gap-3">
-            <Button onClick={handleGenerate} disabled={generating} size="lg" className="w-full sm:w-auto bg-gradient-to-r from-violet-600 to-violet-500 hover:from-violet-700 hover:to-violet-600 shadow-lg shadow-violet-500/20 transition-all">
+          <div className="flex flex-col sm:flex-row items-start sm:items-center gap-3 flex-wrap">
+            <Button onClick={handleGenerate} disabled={generating || deploying} size="lg" className="w-full sm:w-auto bg-gradient-to-r from-violet-600 to-violet-500 hover:from-violet-700 hover:to-violet-600 shadow-lg shadow-violet-500/20 transition-all">
               {generating ? (
-                <><svg className="animate-spin w-4 h-4 mr-2" viewBox="0 0 24 24" fill="none"><circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"/><path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"/></svg>Generating with AI...</>
+                <>{spinner}Generating with AI...</>
               ) : (
                 <><HugeiconsIcon icon={SparklesIcon} size={16} color="currentColor" className="mr-2" />{site.status === "live" ? "Regenerate Website" : "Generate Website"}</>
               )}
@@ -139,9 +181,16 @@ export function SiteDetail({ site: initialSite }: { site: SiteData }) {
                 </a>
                 <Button variant="outline" size="lg" onClick={handleExport} disabled={exporting}>
                   {exporting ? (
-                    <><svg className="animate-spin w-4 h-4 mr-2" viewBox="0 0 24 24" fill="none"><circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"/><path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"/></svg>Exporting...</>
+                    <>{spinner}Exporting...</>
                   ) : (
                     <><HugeiconsIcon icon={Download01Icon} size={16} color="currentColor" className="mr-2" />Export ZIP</>
+                  )}
+                </Button>
+                <Button variant="outline" size="lg" onClick={handleDeploy} disabled={deploying || generating}>
+                  {deploying ? (
+                    <>{spinner}Deploying...</>
+                  ) : (
+                    <><HugeiconsIcon icon={CloudUploadIcon} size={16} color="currentColor" className="mr-2" />{site.githubRepo ? "Redeploy" : "Deploy"}</>
                   )}
                 </Button>
               </>
@@ -167,6 +216,60 @@ export function SiteDetail({ site: initialSite }: { site: SiteData }) {
           )}
         </CardContent>
       </Card>
+
+      {/* Deployment Info */}
+      {(site.githubRepo || site.vercelUrl || deployMessage) && (
+        <Card className="rounded-2xl">
+          <CardHeader className="pb-4">
+            <CardTitle className="text-[14px] font-bold font-heading flex items-center gap-2">
+              <HugeiconsIcon icon={Globe02Icon} size={16} className="text-muted-foreground" />
+              Deployment
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            {deployMessage && (
+              <div className={`flex items-center gap-2 p-3.5 rounded-xl text-[13px] font-medium mb-4 ${
+                site.deployStatus === "deployed"
+                  ? "bg-emerald-50 text-emerald-700 border border-emerald-200"
+                  : "bg-red-50 text-red-700 border border-red-200"
+              }`}>
+                {deployMessage}
+              </div>
+            )}
+            <div className="space-y-3">
+              {site.vercelUrl && (
+                <div className="flex items-center justify-between p-3.5 rounded-xl bg-muted/40 border border-border/50">
+                  <div className="min-w-0">
+                    <div className="text-[10px] text-muted-foreground font-semibold uppercase tracking-wider">Live URL</div>
+                    <a href={site.vercelUrl} target="_blank" rel="noopener noreferrer"
+                       className="text-[13px] text-violet-600 hover:underline font-medium truncate block">
+                      {site.vercelUrl}
+                    </a>
+                  </div>
+                  <HugeiconsIcon icon={LinkSquareIcon} size={14} className="text-muted-foreground shrink-0 ml-3" />
+                </div>
+              )}
+              {site.githubRepo && (
+                <div className="flex items-center justify-between p-3.5 rounded-xl bg-muted/40 border border-border/50">
+                  <div className="min-w-0">
+                    <div className="text-[10px] text-muted-foreground font-semibold uppercase tracking-wider">Repository</div>
+                    <a href={`https://github.com/${site.githubRepo}`} target="_blank" rel="noopener noreferrer"
+                       className="text-[13px] text-violet-600 hover:underline font-medium truncate block">
+                      {site.githubRepo}
+                    </a>
+                  </div>
+                  <HugeiconsIcon icon={LinkSquareIcon} size={14} className="text-muted-foreground shrink-0 ml-3" />
+                </div>
+              )}
+              {site.lastDeployedAt && (
+                <div className="text-[11px] text-muted-foreground/70 font-medium mt-2">
+                  Last deployed: {new Date(site.lastDeployedAt).toLocaleString()}
+                </div>
+              )}
+            </div>
+          </CardContent>
+        </Card>
+      )}
     </div>
   );
 }

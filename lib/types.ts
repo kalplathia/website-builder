@@ -116,6 +116,8 @@ export interface SitePages {
   terms?: TermsPageContent;
 }
 
+export type DeployStatus = "idle" | "deploying" | "deployed" | "failed";
+
 export interface SiteData {
   slug: string;
   businessName: string;
@@ -130,4 +132,11 @@ export interface SiteData {
   createdAt: string;
   generatedAt?: string;
   pages: SitePages;
+  // Deployment
+  githubRepo?: string;
+  vercelProjectId?: string;
+  vercelUrl?: string;
+  lastDeployedAt?: string;
+  deployStatus?: DeployStatus;
+  deployError?: string;
 }

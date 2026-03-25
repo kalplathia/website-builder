@@ -14,3 +14,12 @@ env:
 
   - variable: NEXT_PUBLIC_BASE_URL
     value: https://website-builder-system.web.app
+
+  - variable: GITHUB_TOKEN
+    secret: GITHUB_TOKEN
+
+  - variable: GITHUB_OWNER
+    secret: GITHUB_OWNER
+
+  - variable: VERCEL_TOKEN
+    secret: VERCEL_TOKEN
