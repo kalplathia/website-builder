@@ -10,7 +10,10 @@
 - **Fonts** — Plus Jakarta Sans (headings), Inter (body), JetBrains Mono (code)
 - **Colors** — Violet Creative theme, white sidebar, OKLCH tokens in `app/globals.css`
 - **Storage** — Firebase Firestore (`sites` + `invites` collections) + Firebase Storage (logo uploads)
-- **Deployment** — Firebase App Hosting (project: `website-builder-system`)
+- **Deployment** — Firebase App Hosting (platform), Vercel (generated client sites)
+- **Auto-Deploy** — `app/api/deploy/route.ts` — pushes to GitHub repo → Vercel auto-deploys via webhook
+- **GitHub** — `lib/github.ts` — native fetch, Git Data API (inline tree content for text, blob API for binary)
+- **Vercel** — `lib/vercel.ts` — native fetch, project creation linked to GitHub repo
 - **Templates** — Handlebars (`.hbs`) in `templates/starter/`, rendered via `lib/html-renderer.ts`
 - **Site rendering** — Route handlers (`route.ts`) return raw HTML, NOT React page components
 - **Export** — `app/api/export/route.ts` — ZIP download (5 HTML + logo + robots.txt + sitemap.xml + 404.html) via JSZip
@@ -65,3 +68,13 @@ Key rendering functions in `lib/html-renderer.ts`:
 - `base.hbs` head: meta description, canonical URL, OG tags, Twitter Cards, JSON-LD (Organization)
 - Canonical/og:url omitted in export via Handlebars `{{#if canonicalUrl}}`
 - `lib/not-found.ts` exports `notFoundHtml` (string) + `notFoundResponse()` (Response)
+
+### Auto-Deploy System
+- Deploy route: `POST /api/deploy` — ensures GitHub repo + Vercel project exist, pushes files, Vercel auto-deploys
+- `lib/github.ts`: `repoExists()`, `createRepo()`, `pushFiles()` (inline tree content for text, blob for binary)
+- `lib/vercel.ts`: `createVercelProject()`, `getVercelProject()`
+- SiteData fields: `githubRepo`, `vercelProjectId`, `vercelUrl`, `lastDeployedAt`, `deployStatus`, `deployError`
+- Deploy auto-triggers after Generate; also available as manual "Deploy" button
+- Logo NOT pushed to GitHub (HTML references Firebase Storage URL directly)
+- sitemap.xml uses absolute Vercel URLs
+- Env vars: `GITHUB_TOKEN`, `GITHUB_OWNER`, `VERCEL_TOKEN`, `VERCEL_TEAM_ID`
