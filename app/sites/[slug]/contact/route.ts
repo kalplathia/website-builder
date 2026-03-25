@@ -1,6 +1,7 @@
 import { NextRequest } from "next/server";
 import { getSite } from "@/lib/sites";
 import { renderPage } from "@/lib/html-renderer";
+import { notFoundResponse } from "@/lib/not-found";
 
 export const dynamic = "force-dynamic";
 
@@ -12,7 +13,7 @@ export async function GET(
   const site = await getSite(slug);
 
   if (!site || site.status !== "live") {
-    return new Response("Not Found", { status: 404 });
+    return notFoundResponse();
   }
 
   const html = renderPage(site, "contact", `/sites/${slug}`);

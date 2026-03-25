@@ -12,6 +12,12 @@ export type TemplateType = "starter";
 
 export type SiteStatus = "pending" | "generating" | "live" | "error";
 
+// --- SEO ---
+
+export interface SeoMeta {
+  metaDescription: string;
+}
+
 // --- Home Page ---
 
 export interface HeroContent {
@@ -57,6 +63,7 @@ export interface HomePageContent {
   stats?: StatItem[];
   testimonials?: TestimonialItem[];
   cta: CTAContent;
+  seo?: SeoMeta;
 }
 
 // --- About Page ---
@@ -73,6 +80,7 @@ export interface AboutPageContent {
   values: { title: string; description: string }[];
   team?: TeamMember[];
   quote?: { text: string; author: string };
+  seo?: SeoMeta;
 }
 
 // --- Contact Page ---
@@ -81,6 +89,7 @@ export interface ContactPageContent {
   headline: string;
   description: string;
   formEnabled: boolean;
+  seo?: SeoMeta;
 }
 
 // --- Privacy / Terms ---
@@ -88,11 +97,13 @@ export interface ContactPageContent {
 export interface PrivacyPageContent {
   content: string;
   lastUpdated: string;
+  seo?: SeoMeta;
 }
 
 export interface TermsPageContent {
   content: string;
   lastUpdated: string;
+  seo?: SeoMeta;
 }
 
 // --- Site ---

@@ -57,6 +57,9 @@ Generate content for all 5 pages of their website. Return ONLY valid JSON (no ma
       "headline": "A compelling call to action headline",
       "description": "A short motivating description (15-25 words)",
       "buttonText": "CTA button text (2-4 words)"
+    },
+    "seo": {
+      "metaDescription": "Unique meta description for the home page (140-155 characters). Lead with the strongest value proposition."
     }
   },
   "about": {
@@ -74,20 +77,32 @@ Generate content for all 5 pages of their website. Return ONLY valid JSON (no ma
     "quote": {
       "text": "An inspiring quote relevant to the business or industry (15-25 words)",
       "author": "Attribution name or 'Our Founder'"
+    },
+    "seo": {
+      "metaDescription": "Unique meta description for the about page (140-155 characters). Highlight the company story and mission."
     }
   },
   "contact": {
     "headline": "A welcoming contact page headline",
     "description": "A friendly message encouraging visitors to reach out (15-25 words)",
-    "formEnabled": true
+    "formEnabled": true,
+    "seo": {
+      "metaDescription": "Unique meta description for the contact page (140-155 characters). Encourage visitors to reach out."
+    }
   },
   "privacy": {
     "content": "A comprehensive privacy policy in HTML format with proper <h2>, <h3>, <p>, and <ul> tags. Cover: data collection, usage, cookies, third-party sharing, user rights, contact info. Use ${site.businessName} as the company name and ${site.email} as the contact email throughout.",
-    "lastUpdated": "${today}"
+    "lastUpdated": "${today}",
+    "seo": {
+      "metaDescription": "Unique meta description for the privacy policy page (120-150 characters)."
+    }
   },
   "terms": {
     "content": "Comprehensive terms and conditions in HTML format with proper <h2>, <h3>, <p>, and <ul> tags. Cover: acceptance of terms, services description, user obligations, limitations of liability, termination, governing law. Use ${site.businessName} as the company name and ${site.email} as the contact email throughout.",
-    "lastUpdated": "${today}"
+    "lastUpdated": "${today}",
+    "seo": {
+      "metaDescription": "Unique meta description for the terms page (120-150 characters)."
+    }
   }
 }
 
@@ -97,6 +112,8 @@ IMPORTANT RULES:
 - Make testimonials sound authentic with realistic names and roles
 - Team members should have plausible names and roles for a ${site.industry} business
 - All content must be professional, engaging, and specific to their industry
+- Each page's seo.metaDescription must be unique and specific to that page's content
+- Do NOT exceed 160 characters for any metaDescription
 - Do NOT wrap in markdown code blocks. Return raw JSON only.`;
 
   const response = await openai.chat.completions.create({

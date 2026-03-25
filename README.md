@@ -88,6 +88,7 @@ lib/                    # Utilities
   ai.ts                 # OpenAI content generation
   auth.ts               # HMAC cookie authentication
   types.ts              # TypeScript types
+  not-found.ts          # Styled 404 page HTML
   preview-data.ts       # Preview site data (Acme Studio)
 ```
 
@@ -95,7 +96,8 @@ lib/                    # Utilities
 
 - **AI Generation**: GPT-4o-mini generates all page content from business details
 - **HTML Templates**: Handlebars-based templates with Tailwind CDN styling
-- **ZIP Export**: Download any live site as a standalone static website
+- **ZIP Export**: Download any live site as a standalone static website (HTML + logo + robots.txt + sitemap.xml + 404.html)
+- **SEO**: Per-page meta descriptions (AI-generated), Open Graph tags, Twitter Cards, canonical URLs, JSON-LD structured data
 - **Invite System**: Passcode-protected client submission forms
 - **Admin Dashboard**: Manage sites, invites, generate/regenerate content
 - **Preview**: Live preview of templates with sample data at `/preview/starter`

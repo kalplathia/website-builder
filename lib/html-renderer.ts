@@ -168,6 +168,15 @@ const PAGE_TITLES: Record<string, (site: SiteData) => string> = {
   terms: (site) => `Terms & Conditions | ${site.businessName}`,
 };
 
+// ── Fallback meta descriptions (for sites generated before SEO fields existed) ──
+const PAGE_META_DESCRIPTIONS: Record<string, (site: SiteData) => string> = {
+  home: (site) => site.description,
+  about: (site) => `Learn about ${site.businessName} — our story, mission, and values.`,
+  contact: (site) => `Get in touch with ${site.businessName}. We'd love to hear from you.`,
+  privacy: (site) => `Privacy Policy for ${site.businessName}.`,
+  terms: (site) => `Terms and Conditions for ${site.businessName}.`,
+};
+
 // ── Public API ──
 export type PageType = "home" | "about" | "contact" | "privacy" | "terms";
 
@@ -195,12 +204,21 @@ export function renderPage(site: SiteData, page: PageType, basePath: string): st
 
   const pageContent = pageTemplate({ site, pages: site.pages, currentPage: page, basePath });
 
+  const pageMetaDescription =
+    site.pages[page]?.seo?.metaDescription ||
+    PAGE_META_DESCRIPTIONS[page]?.(site) ||
+    site.description;
+
+  const canonicalUrl = `${process.env.NEXT_PUBLIC_BASE_URL || ""}${basePath}${page === "home" ? "" : `/${page}`}`;
+
   return baseTemplate({
     site,
     pages: site.pages,
     currentPage: page,
     basePath,
     pageTitle: PAGE_TITLES[page]?.(site) || site.businessName,
+    pageMetaDescription,
+    canonicalUrl,
     content: pageContent,
   });
 }
@@ -234,12 +252,19 @@ export function renderForExport(site: SiteData): Record<string, string> {
     const pageContent = pageTemplate({ site, pages: site.pages, currentPage: page, basePath: "." });
     const filename = page === "home" ? "index.html" : `${page}.html`;
 
+    const pageMetaDescription =
+      site.pages[page]?.seo?.metaDescription ||
+      PAGE_META_DESCRIPTIONS[page]?.(site) ||
+      site.description;
+
     result[filename] = baseTemplate({
       site,
       pages: site.pages,
       currentPage: page,
       basePath: ".",
       pageTitle: PAGE_TITLES[page]?.(site) || site.businessName,
+      pageMetaDescription,
+      canonicalUrl: "",
       content: pageContent,
     });
   }

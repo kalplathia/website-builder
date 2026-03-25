@@ -2,6 +2,7 @@ import { NextRequest } from "next/server";
 import { PREVIEW_SITE } from "@/lib/preview-data";
 import { TemplateType } from "@/lib/types";
 import { renderPage, PageType } from "@/lib/html-renderer";
+import { notFoundResponse } from "@/lib/not-found";
 
 const validTemplates: TemplateType[] = ["starter"];
 const validPages: PageType[] = ["about", "contact", "privacy", "terms"];
@@ -13,10 +14,10 @@ export async function GET(
   const { template, page } = await params;
 
   if (!validTemplates.includes(template as TemplateType)) {
-    return new Response("Not Found", { status: 404 });
+    return notFoundResponse();
   }
   if (!validPages.includes(page as PageType)) {
-    return new Response("Not Found", { status: 404 });
+    return notFoundResponse();
   }
 
   const site = { ...PREVIEW_SITE, template: template as TemplateType };

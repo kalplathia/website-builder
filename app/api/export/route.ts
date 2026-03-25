@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getSite } from "@/lib/sites";
 import { renderForExport } from "@/lib/html-renderer";
+import { notFoundHtml } from "@/lib/not-found";
 import JSZip from "jszip";
 
 export async function POST(req: NextRequest) {
@@ -25,6 +26,22 @@ export async function POST(req: NextRequest) {
     for (const [filename, html] of Object.entries(pages)) {
       zip.file(filename, html);
     }
+
+    // robots.txt
+    zip.file("robots.txt", `User-agent: *\nAllow: /\n\nSitemap: sitemap.xml\n`);
+
+    // sitemap.xml
+    const pageFiles = ["index.html", "about.html", "contact.html", "privacy.html", "terms.html"];
+    const sitemapEntries = pageFiles
+      .map((f) => `  <url><loc>${f}</loc></url>`)
+      .join("\n");
+    zip.file(
+      "sitemap.xml",
+      `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n${sitemapEntries}\n</urlset>\n`
+    );
+
+    // 404.html
+    zip.file("404.html", notFoundHtml);
 
     // Include logo if available
     if (site.logo) {

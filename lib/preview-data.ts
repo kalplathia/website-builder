@@ -103,6 +103,9 @@ export const PREVIEW_SITE: SiteData = {
           "Let's collaborate on something extraordinary. Reach out today and let's start building your next great project together.",
         buttonText: "Get Started Today",
       },
+      seo: {
+        metaDescription: "Acme Studio crafts bold brand identities, stunning websites, and digital experiences that drive growth. Start your project today.",
+      },
     },
     about: {
       story:
@@ -142,12 +145,18 @@ export const PREVIEW_SITE: SiteData = {
         text: "Design is not just what it looks like and feels like. Design is how it works — and how it makes people feel.",
         author: "Alex Rivera, Creative Director",
       },
+      seo: {
+        metaDescription: "Discover the story behind Acme Studio — a full-service creative agency founded in 2015, helping brands worldwide through strategic design.",
+      },
     },
     contact: {
       headline: "Let's Work Together",
       description:
         "Have a project in mind? We'd love to hear about it. Reach out and let's start a conversation about how we can help bring your vision to life.",
       formEnabled: true,
+      seo: {
+        metaDescription: "Get in touch with Acme Studio. We'd love to hear about your project and explore how we can bring your vision to life.",
+      },
     },
     privacy: {
       content: `<h2>Introduction</h2>
@@ -182,6 +191,9 @@ export const PREVIEW_SITE: SiteData = {
 <h2>Contact Us</h2>
 <p>If you have questions about this Privacy Policy, please contact us at hello@acmestudio.com.</p>`,
       lastUpdated: "2026-01-01",
+      seo: {
+        metaDescription: "Read Acme Studio's Privacy Policy to understand how we collect, use, and protect your personal information.",
+      },
     },
     terms: {
       content: `<h2>Acceptance of Terms</h2>
@@ -210,6 +222,9 @@ export const PREVIEW_SITE: SiteData = {
 <h2>Contact Us</h2>
 <p>If you have questions about these Terms, please contact us at hello@acmestudio.com.</p>`,
       lastUpdated: "2026-01-01",
+      seo: {
+        metaDescription: "Review the Terms and Conditions for using Acme Studio's website and services.",
+      },
     },
   },
 };

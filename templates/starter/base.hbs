@@ -4,11 +4,22 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>{{pageTitle}}</title>
-  <meta name="description" content="{{site.description}}" />
+  <meta name="description" content="{{pageMetaDescription}}" />
+  {{#if canonicalUrl}}<link rel="canonical" href="{{canonicalUrl}}" />{{/if}}
+
+  <!-- Open Graph -->
   <meta property="og:title" content="{{pageTitle}}" />
-  <meta property="og:description" content="{{site.description}}" />
+  <meta property="og:description" content="{{pageMetaDescription}}" />
   <meta property="og:type" content="website" />
   <meta property="og:site_name" content="{{site.businessName}}" />
+  {{#if canonicalUrl}}<meta property="og:url" content="{{canonicalUrl}}" />{{/if}}
+  {{#if site.logo}}<meta property="og:image" content="{{site.logo}}" />{{/if}}
+
+  <!-- Twitter Card -->
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="{{pageTitle}}" />
+  <meta name="twitter:description" content="{{pageMetaDescription}}" />
+  {{#if site.logo}}<meta name="twitter:image" content="{{site.logo}}" />{{/if}}
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
@@ -89,6 +100,21 @@
       to { opacity: 1; transform: translateY(0); }
     }
   </style>
+
+  <!-- JSON-LD Structured Data -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "Organization",
+    "name": "{{site.businessName}}",
+    "description": "{{site.description}}"{{#if site.logo}},
+    "logo": "{{site.logo}}"{{/if}}{{#if site.email}},
+    "email": "{{site.email}}"{{/if}}{{#if site.phone}},
+    "telephone": "{{site.phone}}"{{/if}}{{#if site.address}},
+    "address": "{{site.address}}"{{/if}}{{#if canonicalUrl}},
+    "url": "{{canonicalUrl}}"{{/if}}
+  }
+  </script>
 </head>
 <body class="bg-white text-gray-900 antialiased">
   <div class="min-h-screen flex flex-col">

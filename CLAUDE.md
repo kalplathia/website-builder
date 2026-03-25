@@ -13,7 +13,9 @@
 - **Deployment** — Firebase App Hosting (project: `website-builder-system`)
 - **Templates** — Handlebars (`.hbs`) in `templates/starter/`, rendered via `lib/html-renderer.ts`
 - **Site rendering** — Route handlers (`route.ts`) return raw HTML, NOT React page components
-- **Export** — `app/api/export/route.ts` — ZIP download (5 HTML files + logo) via JSZip
+- **Export** — `app/api/export/route.ts` — ZIP download (5 HTML + logo + robots.txt + sitemap.xml + 404.html) via JSZip
+- **SEO** — Per-page meta descriptions (AI-generated), OG tags, Twitter Cards, canonical URLs, JSON-LD in `base.hbs`
+- **404** — `lib/not-found.ts` — styled 404 page used by all route handlers
 
 ### Key Conventions
 - Admin pages use nested layout at `app/admin/layout.tsx` with white collapsible sidebar
@@ -55,3 +57,11 @@ templates/starter/
 Key rendering functions in `lib/html-renderer.ts`:
 - `renderPage(site, page, basePath)` — renders one page as full HTML
 - `renderForExport(site)` — renders all pages with relative links for ZIP export
+
+### SEO System
+- `SeoMeta` type in `lib/types.ts` — optional `seo?: { metaDescription }` on each page content type
+- AI generates per-page `seo.metaDescription` alongside page content
+- `PAGE_META_DESCRIPTIONS` in `html-renderer.ts` — fallbacks for sites without SEO fields
+- `base.hbs` head: meta description, canonical URL, OG tags, Twitter Cards, JSON-LD (Organization)
+- Canonical/og:url omitted in export via Handlebars `{{#if canonicalUrl}}`
+- `lib/not-found.ts` exports `notFoundHtml` (string) + `notFoundResponse()` (Response)
